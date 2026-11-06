@@ -69,3 +69,4 @@ This document categorizes all modules from the legacy repository (`workload_enri
 
 2. **MCP Coexistence:**
    - *Current Decision:* The MCP server can run as a standalone stdio process using FastMCP or be invoked via REST API endpoints for agentic tools.
+

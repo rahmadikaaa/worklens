@@ -1,0 +1,2498 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WORKLENS — REA Reverse Engineering Dashboard</title>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Inter Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-body: #0b0f19;
+      --bg-surface: #111827;
+      --bg-card: #1a2234;
+      --bg-card-hover: #222d42;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-focus: rgba(99, 102, 241, 0.5);
+      
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      
+      --primary: #6366f1;
+      --primary-light: #818cf8;
+      --primary-glow: rgba(99, 102, 241, 0.18);
+      
+      /* Classification Colors */
+      --confirmed: #10b981;
+      --confirmed-bg: rgba(16, 185, 129, 0.12);
+      --confirmed-border: rgba(16, 185, 129, 0.35);
+      
+      --inferred: #3b82f6;
+      --inferred-bg: rgba(59, 130, 246, 0.12);
+      --inferred-border: rgba(59, 130, 246, 0.35);
+      
+      --unresolved: #f59e0b;
+      --unresolved-bg: rgba(245, 158, 11, 0.12);
+      --unresolved-border: rgba(245, 158, 11, 0.35);
+
+      --danger: #ef4444;
+      --danger-bg: rgba(239, 68, 68, 0.12);
+      
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+      
+      --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
+      --shadow-glow: 0 0 25px rgba(99, 102, 241, 0.25);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg-body);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    code, pre, .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Top Sticky Header */
+    header.top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(16px);
+      background: rgba(11, 15, 25, 0.88);
+      border-bottom: 1px solid var(--border-color);
+      transition: all 0.3s ease;
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 70px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .brand-logo {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, #6366f1, #3b82f6);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.15rem;
+      color: #fff;
+      box-shadow: 0 2px 10px rgba(99, 102, 241, 0.4);
+    }
+
+    .brand-title {
+      font-weight: 800;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-tag {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      background: rgba(99, 102, 241, 0.2);
+      border: 1px solid rgba(99, 102, 241, 0.4);
+      color: #a5b4fc;
+      border-radius: var(--radius-full);
+      letter-spacing: 0.05em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 6px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: var(--radius-full);
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--text-primary);
+      background: var(--bg-card);
+    }
+
+    .nav-links a.active {
+      color: #818cf8;
+      border: 1px solid rgba(99, 102, 241, 0.3);
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .badge-confirmed {
+      background: var(--confirmed-bg);
+      color: #34d399;
+      border: 1px solid var(--confirmed-border);
+    }
+
+    .badge-inferred {
+      background: var(--inferred-bg);
+      color: #60a5fa;
+      border: 1px solid var(--inferred-border);
+    }
+
+    .badge-unresolved {
+      background: var(--unresolved-bg);
+      color: #fbbf24;
+      border: 1px solid var(--unresolved-border);
+    }
+
+    /* Hero Section */
+    .hero {
+      padding: 48px 0 32px;
+      border-bottom: 1px solid var(--border-color);
+      background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.12) 0%, transparent 60%);
+    }
+
+    .hero-pretitle {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #818cf8;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hero-title {
+      font-size: 2.35rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #ffffff 30%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-desc {
+      font-size: 1.05rem;
+      color: var(--text-secondary);
+      max-width: 860px;
+      margin-bottom: 24px;
+    }
+
+    .hero-meta-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding: 14px 20px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+    }
+
+    .hero-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hero-meta-item strong {
+      color: var(--text-primary);
+    }
+
+    /* Sections */
+    section {
+      padding: 56px 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .section-header {
+      margin-bottom: 32px;
+    }
+
+    .section-tag {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #818cf8;
+      margin-bottom: 6px;
+      display: inline-block;
+    }
+
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+      color: var(--text-primary);
+    }
+
+    .section-subtitle {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      max-width: 820px;
+    }
+
+    /* Cards & Grids */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      box-shadow: var(--shadow-card);
+      transition: transform 0.2s ease, border-color 0.2s ease;
+      position: relative;
+    }
+
+    .card:hover {
+      border-color: rgba(255, 255, 255, 0.14);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* KPI Stats */
+    .kpi-card {
+      padding: 20px 22px;
+      border-radius: var(--radius-md);
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--primary);
+    }
+
+    .kpi-card.kpi-emerald::before { background: var(--confirmed); }
+    .kpi-card.kpi-blue::before { background: var(--inferred); }
+    .kpi-card.kpi-amber::before { background: var(--unresolved); }
+    .kpi-card.kpi-purple::before { background: #a855f7; }
+
+    .kpi-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .kpi-value {
+      font-size: 2.15rem;
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .kpi-subtext {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Progress & Ratio Bars */
+    .ratio-bar-container {
+      margin: 18px 0;
+    }
+
+    .ratio-bar {
+      height: 12px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-full);
+      display: flex;
+      overflow: hidden;
+    }
+
+    .ratio-bar-segment {
+      height: 100%;
+      transition: width 0.8s ease;
+    }
+
+    .ratio-legend {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    /* Tables */
+    .table-container {
+      overflow-x: auto;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      background: var(--bg-surface);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.86rem;
+    }
+
+    thead {
+      background: rgba(255, 255, 255, 0.03);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    th {
+      padding: 12px 16px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      font-size: 0.74rem;
+      letter-spacing: 0.05em;
+    }
+
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--text-primary);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    /* Flowchart / Step Nodes */
+    .pipeline-flow {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      gap: 16px;
+      align-items: center;
+      margin: 28px 0;
+    }
+
+    .flow-node {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      position: relative;
+    }
+
+    .flow-node.active-node {
+      border-color: rgba(99, 102, 241, 0.5);
+      background: linear-gradient(180deg, rgba(99, 102, 241, 0.08) 0%, var(--bg-surface) 100%);
+    }
+
+    .flow-step-num {
+      position: absolute;
+      top: -12px;
+      left: 20px;
+      background: var(--primary);
+      color: white;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 2px 10px;
+      border-radius: var(--radius-full);
+      box-shadow: 0 2px 8px rgba(99, 102, 241, 0.5);
+    }
+
+    .flow-arrow {
+      font-size: 1.5rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Interactive Simulator */
+    .simulator-box {
+      background: linear-gradient(145deg, #131c31 0%, #0f172a 100%);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .sim-controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .sim-field label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+
+    .sim-field select, .sim-field input {
+      width: 100%;
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #f8fafc;
+      padding: 9px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .sim-field select:focus, .sim-field input:focus {
+      border-color: #818cf8;
+      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25);
+    }
+
+    .sim-presets {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .sim-preset-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-secondary);
+      padding: 5px 12px;
+      font-size: 0.78rem;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .sim-preset-btn:hover {
+      background: rgba(99, 102, 241, 0.2);
+      border-color: rgba(99, 102, 241, 0.4);
+      color: #fff;
+    }
+
+    .sim-output-card {
+      background: #090d16;
+      border: 1px solid rgba(99, 102, 241, 0.35);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      position: relative;
+    }
+
+    .sim-output-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .sim-formula-pill {
+      font-size: 0.8rem;
+      color: #93c5fd;
+      background: rgba(59, 130, 246, 0.12);
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(59, 130, 246, 0.25);
+    }
+
+    .sim-output-text {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #f1f5f9;
+      line-height: 1.6;
+      background: rgba(255, 255, 255, 0.02);
+      padding: 16px;
+      border-radius: var(--radius-sm);
+      border-left: 4px solid #6366f1;
+    }
+
+    /* Tabs */
+    .tabs-nav {
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 24px;
+      padding-bottom: 8px;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      font-weight: 700;
+      padding: 8px 18px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .tab-btn.active {
+      color: #fff;
+      background: var(--bg-card);
+      border-bottom: 2px solid var(--primary);
+    }
+
+    .tab-pane {
+      display: none;
+    }
+
+    .tab-pane.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Callout & Alert Box */
+    .callout {
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      margin: 18px 0;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      border: 1px solid transparent;
+    }
+
+    .callout-info {
+      background: rgba(59, 130, 246, 0.08);
+      border-color: rgba(59, 130, 246, 0.25);
+      color: #bfdbfe;
+    }
+
+    .callout-warning {
+      background: rgba(245, 158, 11, 0.08);
+      border-color: rgba(245, 158, 11, 0.25);
+      color: #fde68a;
+    }
+
+    .callout-success {
+      background: rgba(16, 185, 129, 0.08);
+      border-color: rgba(16, 185, 129, 0.25);
+      color: #a7f3d0;
+    }
+
+    .callout-icon {
+      font-size: 1.25rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* Footer */
+    footer {
+      padding: 48px 0;
+      background: #070a12;
+      border-top: 1px solid var(--border-color);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .grid-4 { grid-template-columns: repeat(2, 1fr); }
+      .grid-3 { grid-template-columns: 1fr; }
+      .pipeline-flow { grid-template-columns: 1fr; gap: 12px; }
+      .flow-arrow { transform: rotate(90deg); margin: 6px 0; }
+    }
+
+    @media (max-width: 768px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .grid-4 { grid-template-columns: 1fr; }
+      .nav-links { display: none; } /* hamburger could be added or simple overflow */
+      .hero-title { font-size: 1.75rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="top-nav">
+    <div class="container nav-inner">
+      <a href="#overview" class="brand">
+        <div class="brand-logo">W</div>
+        <div>
+          <div class="brand-title">
+            WORKLENS
+            <span class="brand-tag">REA Forensic</span>
+          </div>
+        </div>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#overview" class="active">Overview</a></li>
+        <li><a href="#selection">Selection</a></li>
+        <li><a href="#transformation">Transformation</a></li>
+        <li><a href="#enrichment">Enrichment</a></li>
+        <li><a href="#validation">Validation & Matrix</a></li>
+        <li><a href="#conclusion">Conclusion</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <header class="hero">
+    <div class="container">
+      <div class="hero-pretitle">
+        <span class="badge badge-confirmed">Validated Baseline</span>
+        Reverse Engineering Discovery & Empirical Forensic Dashboard
+      </div>
+      <h1 class="hero-title">REA Reverse Engineering Interactive Intelligence</h1>
+      <p class="hero-desc">
+        Investigasi forensik empiris dan rekonsiliasi kuantitatif terhadap <strong>667 aktivitas terpilih REA</strong> 
+        dari <strong>3.460 total aktivitas</strong> L1 AGIT. Memvalidasi kriteria seleksi, normalisasi perkakas, 
+        akurasi formula beban kerja, dan 100% deterministik tata bahasa Benefit.
+      </p>
+
+      <div class="hero-meta-bar">
+        <div class="hero-meta-item">
+          <span>Source Dataset:</span>
+          <strong>3.460 records (SHA-256: 2ee85f43...)</strong>
+        </div>
+        <div class="hero-meta-item">
+          <span>REA Benchmark:</span>
+          <strong>667 records (Improvements_With_Benefit.csv)</strong>
+        </div>
+        <div class="hero-meta-item">
+          <span>Audit Status:</span>
+          <span class="badge badge-confirmed">100.00% Reconciled</span>
+        </div>
+        <div class="hero-meta-item">
+          <span>Branch Target:</span>
+          <code class="mono">develop</code>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- SECTION 1: OVERVIEW -->
+    <section id="overview">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Bagian 1</span>
+          <h2 class="section-title">Overview & Rekonsiliasi Snapshot Dataset</h2>
+          <p class="section-subtitle">
+            Perbandingan makro populasi aktivitas, rasio konversi seleksi REA, dan pembuktian empiris integritas snapshot dataset kanonikal 3.460 vs 3.456 baris.
+          </p>
+        </div>
+
+        <!-- 4 KPI Cards -->
+        <div class="grid-4" style="margin-bottom: 28px;">
+          <div class="kpi-card kpi-purple">
+            <div class="kpi-label">Total Aktivitas Core</div>
+            <div class="kpi-value">3.460</div>
+            <div class="kpi-subtext">Populasi SOP L1 AGIT Breakdown (100%)</div>
+          </div>
+          <div class="kpi-card kpi-emerald">
+            <div class="kpi-label">Aktivitas Terpilih REA</div>
+            <div class="kpi-value">
+              667
+              <span style="font-size: 1rem; color: #34d399; font-weight: 700;">(19,28%)</span>
+            </div>
+            <div class="kpi-subtext">Benchmark Improvements With Benefit</div>
+          </div>
+          <div class="kpi-card kpi-amber">
+            <div class="kpi-label">Aktivitas Tereliminasi</div>
+            <div class="kpi-value">
+              2.793
+              <span style="font-size: 1rem; color: #fbbf24; font-weight: 700;">(80,72%)</span>
+            </div>
+            <div class="kpi-subtext">Didekonstruksi via 5 Filter Eliminasi</div>
+          </div>
+          <div class="kpi-card kpi-blue">
+            <div class="kpi-label">Kecocokan Formula & Grammar</div>
+            <div class="kpi-value">100%</div>
+            <div class="kpi-subtext">667 dari 667 baris valid matematis</div>
+          </div>
+        </div>
+
+        <!-- Visual Comparison: Donut & Bar -->
+        <div class="grid-2">
+          <!-- Ratio & Donut Card -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Proporsi Seleksi Aktivitas REA</h3>
+                <div class="card-subtitle">Perbandingan 667 Aktivitas Terpilih vs 2.793 Non-REA</div>
+              </div>
+              <span class="badge badge-confirmed">CONFIRMED</span>
+            </div>
+
+            <div style="height: 240px; position: relative;">
+              <canvas id="overviewDonutChart"></canvas>
+            </div>
+
+            <div class="ratio-bar-container">
+              <div class="ratio-bar">
+                <div class="ratio-bar-segment" style="width: 19.28%; background: #10b981;"></div>
+                <div class="ratio-bar-segment" style="width: 80.72%; background: #334155;"></div>
+              </div>
+              <div class="ratio-legend">
+                <div class="legend-item">
+                  <div class="legend-dot" style="background: #10b981;"></div>
+                  <span>Terpilih REA: <strong>667 (19,28%)</strong></span>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-dot" style="background: #334155;"></div>
+                  <span>Non-REA: <strong>2.793 (80,72%)</strong></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Snapshot Reconciliation Card -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Rekonsiliasi Snapshot: 3.460 vs 3.456 Records</h3>
+                <div class="card-subtitle">Verifikasi Checksum SHA-256 & 4 Delta Records</div>
+              </div>
+              <span class="badge badge-confirmed">CFM-03</span>
+            </div>
+
+            <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 16px;">
+              Investigasi forensik membuktikan selisih 4 baris antara snapshot historis (03-Nov-2026) dan snapshot baseline (05-Nov-2026) 
+              bersifat <strong>aditif</strong> dan <strong>tidak memengaruhi benchmark REA</strong> (0 dari 4 baris masuk ke 667 REA).
+            </p>
+
+            <div class="table-container" style="margin-bottom: 14px;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Snapshot</th>
+                    <th>Records</th>
+                    <th>Tanggal Ekstraksi</th>
+                    <th>Irisan ke 667 REA</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Historis Legacy</strong></td>
+                    <td>3.456</td>
+                    <td>03-Nov-2026 16:46</td>
+                    <td><span class="badge badge-confirmed">667 / 667 (100%)</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Baseline Worklens</strong></td>
+                    <td>3.460</td>
+                    <td>05-Nov-2026 10:04</td>
+                    <td><span class="badge badge-confirmed">667 / 667 (100%)</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div style="background: rgba(255,255,255,0.03); border-radius: var(--radius-sm); padding: 12px 14px; font-size: 0.8rem;">
+              <strong style="color: #cbd5e1; display: block; margin-bottom: 6px;">4 Record Delta Tambahan (Hanya di 3.460):</strong>
+              <ol style="margin-left: 20px; color: var(--text-secondary);">
+                <li><code class="mono">Remedy - IPE - Permission Group</code></li>
+                <li><code class="mono">Serafin - Parameter Setting</code></li>
+                <li><code class="mono">Loan Marketplace - Housekeeping</code></li>
+                <li><code class="mono">Remedy - IPE - Role List Data</code></li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: SELECTION ANALYSIS -->
+    <section id="selection">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Bagian 2</span>
+          <h2 class="section-title">Selection Analysis & Hierarki Eliminasi</h2>
+          <p class="section-subtitle">
+            Dekomposisi kriteria seleksi: 98,65% berasal dari status Already Automation, 9 kasus inklusi eksepsional oleh SME, 
+            dan pemetaan tuntas 5 filter eliminasi non-REA termasuk 258 baris kurasi manual SME.
+          </p>
+        </div>
+
+        <!-- 3 Highlights Cards -->
+        <div class="grid-3" style="margin-bottom: 24px;">
+          <div class="card" style="border-left: 4px solid #10b981;">
+            <div style="font-size: 0.8rem; font-weight: 700; color: #34d399; text-transform: uppercase;">Basis Seleksi Utama</div>
+            <div style="font-size: 1.8rem; font-weight: 800; margin: 4px 0;">658 Aktivitas</div>
+            <p style="font-size: 0.84rem; color: var(--text-secondary);">
+              Berasal dari kategori <strong>Already Automation (654)</strong> dan variasi typo <strong>Already Automated (4)</strong>. Mewakili 98,65% populasi REA.
+            </p>
+          </div>
+
+          <div class="card" style="border-left: 4px solid #f59e0b;">
+            <div style="font-size: 0.8rem; font-weight: 700; color: #fbbf24; text-transform: uppercase;">Inklusi Eksepsional SME</div>
+            <div style="font-size: 1.8rem; font-weight: 800; margin: 4px 0;">9 Aktivitas</div>
+            <p style="font-size: 0.84rem; color: var(--text-secondary);">
+              Aktivitas berstatus <strong>Dismantled (7)</strong> dan <strong>Not Possible Automate (2)</strong> yang diloloskan SME karena bernilai strategis tinggi.
+            </p>
+          </div>
+
+          <div class="card" style="border-left: 4px solid #3b82f6;">
+            <div style="font-size: 0.8rem; font-weight: 700; color: #60a5fa; text-transform: uppercase;">Kurasi Diskresioner SME</div>
+            <div style="font-size: 1.8rem; font-weight: 800; margin: 4px 0;">258 Aktivitas</div>
+            <p style="font-size: 0.84rem; color: var(--text-secondary);">
+              Memenuhi syarat Already Automation dan Workload > 0 namun dieliminasi SME (dashboard sekunder, BA manual, & audit).
+            </p>
+          </div>
+        </div>
+
+        <!-- Funnel Visualization and Cross-Tabulation -->
+        <div class="grid-2" style="margin-bottom: 28px;">
+          <!-- Funnel Bar Chart -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Dekomposisi 5 Lapisan Rejection Funnel</h3>
+                <div class="card-subtitle">Alasan Eliminasi 2.793 Aktivitas Non-REA</div>
+              </div>
+              <span class="badge badge-inferred">INF-01</span>
+            </div>
+            <div style="height: 280px; position: relative;">
+              <canvas id="rejectionFunnelChart"></canvas>
+            </div>
+            <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 12px; text-align: center;">
+              * 89,9% eliminasi (2.535 baris) diselesaikan melalui 4 aturan deterministik kaku.
+            </div>
+          </div>
+
+          <!-- Cross Tabulation Category Notes Table -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Distribusi Kategori Notes vs Keberadaan REA</h3>
+                <div class="card-subtitle">Cross-tabulation Status Otomasi Mentah (3.460 Baris)</div>
+              </div>
+              <span class="badge badge-confirmed">CONFIRMED</span>
+            </div>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Category Notes</th>
+                    <th>Non-REA</th>
+                    <th>Terpilih REA</th>
+                    <th>Total</th>
+                    <th>Konversi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="background: rgba(16, 185, 129, 0.08);">
+                    <td><strong>Already Automation</strong></td>
+                    <td>814</td>
+                    <td><strong style="color: #34d399;">654</strong></td>
+                    <td>1.468</td>
+                    <td>44,55%</td>
+                  </tr>
+                  <tr style="background: rgba(16, 185, 129, 0.08);">
+                    <td><strong>Already Automated (typo)</strong></td>
+                    <td>4</td>
+                    <td><strong style="color: #34d399;">4</strong></td>
+                    <td>8</td>
+                    <td>50,00%</td>
+                  </tr>
+                  <tr style="background: rgba(245, 158, 11, 0.05);">
+                    <td><strong>Dismantled (Pengecualian)</strong></td>
+                    <td>479</td>
+                    <td><strong style="color: #fbbf24;">7</strong></td>
+                    <td>486</td>
+                    <td>1,44%</td>
+                  </tr>
+                  <tr style="background: rgba(245, 158, 11, 0.05);">
+                    <td><strong>Not Possible Automate</strong></td>
+                    <td>772</td>
+                    <td><strong style="color: #fbbf24;">2</strong></td>
+                    <td>774</td>
+                    <td>0,26%</td>
+                  </tr>
+                  <tr>
+                    <td>As Is</td>
+                    <td>309</td>
+                    <td>0</td>
+                    <td>309</td>
+                    <td>0,00%</td>
+                  </tr>
+                  <tr>
+                    <td>To Be Automated</td>
+                    <td>121</td>
+                    <td>0</td>
+                    <td>121</td>
+                    <td>0,00%</td>
+                  </tr>
+                  <tr>
+                    <td>Not Yet Solution / Blank / Other</td>
+                    <td>294</td>
+                    <td>0</td>
+                    <td>294</td>
+                    <td>0,00%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Exceptional Inclusions Table -->
+        <div class="card" style="margin-bottom: 28px;">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">9 Aktivitas Pengecualian Non-Automation (Exceptional Inclusions)</h3>
+              <div class="card-subtitle">Aktivitas Dismantled dan Not Possible Automate yang Disertakan ke Benchmark REA</div>
+            </div>
+            <span class="badge badge-unresolved">EXC-06 &bull; Kurasi SME</span>
+          </div>
+
+          <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 14px;">
+            Aktivitas berikut disaring masuk ke benchmark secara diskresioner oleh SME karena migrasi ke platform modern 
+            (AION / New Grafana Platform) atau pembentukan standardisasi self-service L1:
+          </p>
+
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 40px;">No</th>
+                  <th>Activity ID (Core Dataset)</th>
+                  <th>Category Notes</th>
+                  <th>Tools (REA)</th>
+                  <th>Category Action</th>
+                  <th>Justifikasi Bisnis Inklusi SME</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td><code class="mono">CPQ - Restart Service Java</code></td>
+                  <td><span class="badge badge-unresolved">Dismantled</span></td>
+                  <td>AION</td>
+                  <td>Smart Healing</td>
+                  <td>Layanan CPQ dialihkan ke self-healing AION meski modul lama didismantle.</td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td><code class="mono">DitaAja - Pengecekan Log Surrounding</code></td>
+                  <td><span class="badge badge-unresolved">Dismantled</span></td>
+                  <td>Not Automate</td>
+                  <td>Auto Monitoring</td>
+                  <td>Monitoring log surrounding tetap dipertahankan via standard automation.</td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td><code class="mono">IPTV Analytics - Troubleshoot Disk Full EZA</code></td>
+                  <td><span class="badge badge-unresolved">Dismantled</span></td>
+                  <td>AION</td>
+                  <td>Auto Housekeeping</td>
+                  <td>Remediasi disk full dialihkan ke automasi AION.</td>
+                </tr>
+                <tr>
+                  <td>4</td>
+                  <td><code class="mono">MBP - Monitoring Transaction Performance via Grafana</code></td>
+                  <td><span class="badge badge-unresolved">Dismantled</span></td>
+                  <td>Grafana</td>
+                  <td>Auto Monitoring</td>
+                  <td>Dashboard baru diaktifkan pada migrasi New Platform.</td>
+                </tr>
+                <tr>
+                  <td>5</td>
+                  <td><code class="mono">MBP - Monitoring Success Rate via Grafana</code></td>
+                  <td><span class="badge badge-unresolved">Dismantled</span></td>
+                  <td>Grafana</td>
+                  <td>Auto Monitoring</td>
+                  <td>Dashboard baru diaktifkan pada migrasi New Platform.</td>
+                </tr>
+                <tr>
+                  <td>6</td>
+                  <td><code class="mono">MBP - Monitoring Transaction via Grafana</code></td>
+                  <td><span class="badge badge-unresolved">Dismantled</span></td>
+                  <td>Grafana</td>
+                  <td>Auto Monitoring</td>
+                  <td>Dashboard baru diaktifkan pada migrasi New Platform.</td>
+                </tr>
+                <tr>
+                  <td>7</td>
+                  <td><code class="mono">Telkomsel Portal - Check Order as Sobi Ultimate Or Eznet Wireless (fmc)</code></td>
+                  <td><span class="badge badge-unresolved">Dismantled</span></td>
+                  <td>AION</td>
+                  <td>Self Service Request</td>
+                  <td>Pengecekan order FMC dialihkan ke AION self-service.</td>
+                </tr>
+                <tr>
+                  <td>8</td>
+                  <td><code class="mono">SAM - How to Get Finding EOS Application & Operating System v2.0</code></td>
+                  <td><span class="badge badge-unresolved">Not Possible Automate</span></td>
+                  <td>Not Automate</td>
+                  <td>Self Service Request</td>
+                  <td>Standarisasi penarikan finding EOS tanpa intervensi manual L1.</td>
+                </tr>
+                <tr>
+                  <td>9</td>
+                  <td><code class="mono">SAM - How to Get Finding Oracle Draft</code></td>
+                  <td><span class="badge badge-unresolved">Not Possible Automate</span></td>
+                  <td>Not Automate</td>
+                  <td>Self Service Request</td>
+                  <td>Standarisasi penarikan finding Oracle draft via template L1.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 258 SME Clarification Deep Dive -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Klarifikasi 258 Aktivitas Non-REA Terkurasi SME</h3>
+              <div class="card-subtitle">Profil Aktivitas Already Automation Berbeban Positif yang Dieliminasi</div>
+            </div>
+            <span class="badge badge-unresolved">UNR-01 &bull; Perlu Keputusan SME</span>
+          </div>
+
+          <div class="callout callout-warning">
+            <div class="callout-icon">&#9888;</div>
+            <div>
+              <strong>Catatan Tata Kelola Bisnis (UNR-01):</strong><br>
+              Ke-258 aktivitas ini secara kriteria matematis memenuhi syarat (<code class="mono">Already Automation</code>, <code class="mono">Phase 1</code>, <code class="mono">Workload > 0</code>), namun sengaja disisihkan dari REA oleh kurator SME. Untuk implementasi engine otomatis Worklens, kriteria ini membutuhkan keputusan: apakah mengadopsi model rule-based atau persetujuan SME manual.
+            </div>
+          </div>
+
+          <div class="grid-4">
+            <div style="background: rgba(255,255,255,0.03); padding: 16px; border-radius: var(--radius-sm);">
+              <div style="color: #93c5fd; font-size: 1.4rem; font-weight: 800;">130</div>
+              <div style="font-weight: 700; font-size: 0.85rem; margin-bottom: 4px;">Metrik Grafana Sekunder</div>
+              <p style="font-size: 0.78rem; color: var(--text-secondary);">
+                Pengecekan widget/dashboard yang sifatnya redundan atau pelengkap dashboard utama.
+              </p>
+            </div>
+            <div style="background: rgba(255,255,255,0.03); padding: 16px; border-radius: var(--radius-sm);">
+              <div style="color: #93c5fd; font-size: 1.4rem; font-weight: 800;">69</div>
+              <div style="font-weight: 700; font-size: 0.85rem; margin-bottom: 4px;">Shell Script Internal</div>
+              <p style="font-size: 0.78rem; color: var(--text-secondary);">
+                Script operasional rutin server berdurasi mikro atau log check sekunder.
+              </p>
+            </div>
+            <div style="background: rgba(255,255,255,0.03); padding: 16px; border-radius: var(--radius-sm);">
+              <div style="color: #93c5fd; font-size: 1.4rem; font-weight: 800;">15</div>
+              <div style="font-weight: 700; font-size: 0.85rem; margin-bottom: 4px;">Pelaporan Administratif</div>
+              <p style="font-size: 0.78rem; color: var(--text-secondary);">
+                Berita Acara Data Loading, Daily Reporting, dan tanda tangan manual form.
+              </p>
+            </div>
+            <div style="background: rgba(255,255,255,0.03); padding: 16px; border-radius: var(--radius-sm);">
+              <div style="color: #93c5fd; font-size: 1.4rem; font-weight: 800;">16</div>
+              <div style="font-weight: 700; font-size: 0.85rem; margin-bottom: 4px;">Audit & Change Request</div>
+              <p style="font-size: 0.78rem; color: var(--text-secondary);">
+                Tugas kepatuhan periodik, review akun, dan rilis konfigurasi berkala.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: TRANSFORMATION ANALYSIS -->
+    <section id="transformation">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Bagian 3</span>
+          <h2 class="section-title">Transformation Analysis & Normalisasi Skema</h2>
+          <p class="section-subtitle">
+            Pemadatan 37 kolom Core JSON menjadi 8 kolom ringkas benchmark REA, 2 kasus numeric override, 
+            127 perubahan normalisasi perkakas otomatis, dan bukti empiris formula beban kerja.
+          </p>
+        </div>
+
+        <!-- Formula Highlight Banner -->
+        <div class="callout callout-info" style="margin-bottom: 28px;">
+          <div class="callout-icon">&#9874;</div>
+          <div style="flex-grow: 1;">
+            <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px;">
+              <strong style="font-size: 1.05rem; color: #93c5fd;">Formula Beban Kerja Deterministik:</strong>
+              <span class="badge badge-confirmed">CFM-01 &bull; 100.00% Valid</span>
+            </div>
+            <div style="font-size: 1.15rem; font-weight: 700; margin: 6px 0; color: #fff;">
+              <code class="mono" style="background: rgba(0,0,0,0.3); padding: 4px 10px; border-radius: 6px;">Workload = Durasi (Menit) &times; Event Per Month</code>
+            </div>
+            <div style="font-size: 0.85rem;">
+              Diverifikasi pada seluruh 667 baris REA: <strong>0 deviasi</strong> dari perkalian numerik. 
+              Dua baris yang nilainya berbeda dari Core terbukti disesuaikan inputnya secara eksplisit oleh SME, lalu dihitung dengan formula yang sama.
+            </div>
+          </div>
+        </div>
+
+        <!-- 2 Columns: Schema Mapping Table & 2 Numeric Overrides -->
+        <div class="grid-2" style="margin-bottom: 28px;">
+          <!-- Schema Mapping -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Pemetaan 8 Kolom Benchmark REA</h3>
+                <div class="card-subtitle">Transformasi Atribut dari 37 Kolom Core JSON</div>
+              </div>
+              <span class="badge badge-confirmed">CFM-04</span>
+            </div>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Kolom REA CSV</th>
+                    <th>Sumber Core JSON</th>
+                    <th>Tipe Transformasi</th>
+                    <th>Kesesuaian</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code class="mono">CONCAT</code></td>
+                    <td><code class="mono">activity_id</code></td>
+                    <td>Trim spasi ujung (<code class="mono">.strip()</code>)</td>
+                    <td><span class="badge badge-confirmed">100% (658+9)</span></td>
+                  </tr>
+                  <tr>
+                    <td><code class="mono">Durasi (Menit)</code></td>
+                    <td><code class="mono">Durasi (Menit)</code></td>
+                    <td>Direct cast (1 baris override)</td>
+                    <td><span class="badge badge-confirmed">99,85%</span></td>
+                  </tr>
+                  <tr>
+                    <td><code class="mono">Event Per Month</code></td>
+                    <td><code class="mono">Event Per Month</code></td>
+                    <td>Direct cast (1 baris override)</td>
+                    <td><span class="badge badge-confirmed">99,85%</span></td>
+                  </tr>
+                  <tr>
+                    <td><code class="mono">Workload</code></td>
+                    <td><code class="mono">Workload</code></td>
+                    <td>Dihitung ulang (<code class="mono">Durasi &times; Event</code>)</td>
+                    <td><span class="badge badge-confirmed">100.00%</span></td>
+                  </tr>
+                  <tr>
+                    <td><code class="mono">Category Action</code></td>
+                    <td><em>(Kosong di Core)</em></td>
+                    <td>Enrichment SME (6 kelas aksi)</td>
+                    <td><span class="badge badge-inferred">100% Terisi</span></td>
+                  </tr>
+                  <tr>
+                    <td><code class="mono">Tools Automation</code></td>
+                    <td><code class="mono">Tools Automation</code></td>
+                    <td>Normalisasi & eskalasi AION</td>
+                    <td><span class="badge badge-inferred">127 Perubahan</span></td>
+                  </tr>
+                  <tr>
+                    <td><code class="mono">Status Triggered</code></td>
+                    <td><em>(Tidak ada di Core)</em></td>
+                    <td>Enrichment operasional SME</td>
+                    <td><span class="badge badge-inferred">3 Status</span></td>
+                  </tr>
+                  <tr>
+                    <td><code class="mono">Benefit</code></td>
+                    <td><em>(Tidak ada di Core)</em></td>
+                    <td>Enrichment grammar deterministik</td>
+                    <td><span class="badge badge-confirmed">100.00% Match</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 2 Numeric Overrides -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Dua Kasus Numeric Override Manual</h3>
+                <div class="card-subtitle">Penyesuaian Angka oleh SME pada File Benchmark</div>
+              </div>
+              <span class="badge badge-confirmed">CFM-05 &bull; EXC-01 & 02</span>
+            </div>
+
+            <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 14px;">
+              Tepat <strong>665 dari 667 baris (99,70%)</strong> memiliki angka Durasi, Event, dan Workload yang identik 100%. 
+              Hanya 2 baris berikut yang mengalami penyesuaian angka oleh SME:
+            </p>
+
+            <!-- Case 1 Card -->
+            <div style="background: rgba(255,255,255,0.03); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 12px; border-left: 3px solid #6366f1;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <strong style="color: #fff; font-size: 0.9rem;">Kasus 1: Email Relay External - Housekeeping</strong>
+                <span class="badge badge-unresolved">EXC-01</span>
+              </div>
+              <div style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 6px;">
+                Nilai Core: <code class="mono">Durasi=30, Event=1 &rarr; Workload=30</code><br>
+                Nilai REA CSV: <strong style="color: #34d399;"><code class="mono">Durasi=5, Event=1 &rarr; Workload=5</code></strong>
+              </div>
+              <div style="font-size: 0.78rem; color: var(--text-muted);">
+                <em>Justifikasi SME:</em> Durasi pelaksanaan housekeeping rutin via script dinilai ulang dari 30 menit menjadi 5 menit realistis. Formula tetap konsisten: 5 &times; 1 = 5.
+              </div>
+            </div>
+
+            <!-- Case 2 Card -->
+            <div style="background: rgba(255,255,255,0.03); border-radius: var(--radius-sm); padding: 14px; border-left: 3px solid #6366f1;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <strong style="color: #fff; font-size: 0.9rem;">Kasus 2: Elisa - Check Log Elisa di DB</strong>
+                <span class="badge badge-unresolved">EXC-02</span>
+              </div>
+              <div style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 6px;">
+                Nilai Core: <code class="mono">Durasi=5, Event=30 &rarr; Workload=150</code><br>
+                Nilai REA CSV: <strong style="color: #34d399;"><code class="mono">Durasi=5, Event=1 &rarr; Workload=5</code></strong>
+              </div>
+              <div style="font-size: 0.78rem; color: var(--text-muted);">
+                <em>Justifikasi SME:</em> Frekuensi bulanan dinormalisasi dari 30 event (harian) menjadi 1 event berkala. Formula tetap konsisten: 5 &times; 1 = 5.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 127 Tools Automation Breakdown -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Transformasi Perkakas Otomasi (127 Perubahan Tools Automation)</h3>
+              <div class="card-subtitle">Eskalasi Tooling ke AION & Standardisasi Nomenklatur Skrip/Dashboard</div>
+            </div>
+            <span class="badge badge-inferred">INF-04 &bull; 127 Rows</span>
+          </div>
+
+          <div class="grid-2">
+            <div style="height: 280px; position: relative;">
+              <canvas id="toolsTransformChart"></canvas>
+            </div>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Tools Asal (Core)</th>
+                    <th>Tools Baru (REA)</th>
+                    <th>Jumlah</th>
+                    <th>Tujuan Perubahan</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="background: rgba(99, 102, 241, 0.08);">
+                    <td><code class="mono">Not Automate</code></td>
+                    <td><strong style="color: #a5b4fc;"><code class="mono">AION</code></strong></td>
+                    <td><strong>93</strong></td>
+                    <td>Eskalasi ke platform orkestrasi AION</td>
+                  </tr>
+                  <tr>
+                    <td><code class="mono">Shell script</code> (lowercase)</td>
+                    <td><code class="mono">Shell Script</code> (Title Case)</td>
+                    <td>14</td>
+                    <td>Standardisasi penulisan huruf besar</td>
+                  </tr>
+                  <tr>
+                    <td><code class="mono">Not Automate</code></td>
+                    <td><code class="mono">Shell Script</code></td>
+                    <td>6</td>
+                    <td>Script automasi tersedia di host</td>
+                  </tr>
+                  <tr>
+                    <td><code class="mono">Shell script</code> / <code class="mono">Shell Script</code></td>
+                    <td><code class="mono">Grafana</code></td>
+                    <td>8</td>
+                    <td>Migrasi monitoring script ke dashboard</td>
+                  </tr>
+                  <tr>
+                    <td><code class="mono">Shell Script</code></td>
+                    <td><code class="mono">AION</code></td>
+                    <td>3</td>
+                    <td>Integrasi skrip ke workflow AION</td>
+                  </tr>
+                  <tr>
+                    <td><code class="mono">AION</code></td>
+                    <td><code class="mono">AO</code></td>
+                    <td>2</td>
+                    <td>Automation Orchestrator (Pacelayer)</td>
+                  </tr>
+                  <tr>
+                    <td><code class="mono">Not Automate</code></td>
+                    <td><code class="mono">Grafana</code></td>
+                    <td>1</td>
+                    <td>Penyediaan dashboard monitoring</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: ENRICHMENT ANALYSIS -->
+    <section id="enrichment">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Bagian 4</span>
+          <h2 class="section-title">Enrichment Analysis: Taksonomi, Kematangan, & Grammar Benefit</h2>
+          <p class="section-subtitle">
+            Dekomposisi 6 Category Action, 3 tingkat Status Triggered, korelasi silang kesiapan produksi, 
+            serta pembuktian 100% deterministik tata bahasa Benefit.
+          </p>
+        </div>
+
+        <!-- 2 Grid: Category Action Chart & Status Triggered Chart -->
+        <div class="grid-2" style="margin-bottom: 28px;">
+          <!-- Category Action Card -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Distribusi 6 Category Action</h3>
+                <div class="card-subtitle">Klasifikasi Semantik Tindakan L1 (667 Baris REA)</div>
+              </div>
+              <span class="badge badge-inferred">INF-05 &bull; 87,86% Heuristik</span>
+            </div>
+            <div style="height: 250px; position: relative;">
+              <canvas id="categoryActionChart"></canvas>
+            </div>
+            <div class="table-container" style="margin-top: 14px;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Category Action</th>
+                    <th>Jumlah</th>
+                    <th>Porsi</th>
+                    <th>Kata Kunci Dominan</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Smart Healing</strong></td>
+                    <td>199</td>
+                    <td>29,8%</td>
+                    <td><code class="mono">restart, service, redis, stop-start</code></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Auto Monitoring</strong></td>
+                    <td>190</td>
+                    <td>28,5%</td>
+                    <td><code class="mono">monitoring, widget, grafana, traffic</code></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Self Service Request</strong></td>
+                    <td>120</td>
+                    <td>18,0%</td>
+                    <td><code class="mono">ticket, order, finding, check log, fmc</code></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Auto Housekeeping</strong></td>
+                    <td>112</td>
+                    <td>16,8%</td>
+                    <td><code class="mono">housekeeping, cleanup, clear log, temp</code></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Health Check</strong></td>
+                    <td>37</td>
+                    <td>5,5%</td>
+                    <td><code class="mono">health check, memory, disk usage, cpu</code></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Auto Restart</strong></td>
+                    <td>9</td>
+                    <td>1,3%</td>
+                    <td><code class="mono">bot, cypress, admin api, restart bot</code></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Status Triggered Card -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Distribusi & Korelasi Status Triggered</h3>
+                <div class="card-subtitle">Kematangan Eksekusi Produksi (3 Kategori)</div>
+              </div>
+              <span class="badge badge-inferred">INF-02 &amp; 03</span>
+            </div>
+            <div style="height: 250px; position: relative;">
+              <canvas id="statusTriggeredChart"></canvas>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 14px;">
+              <div style="background: rgba(16, 185, 129, 0.08); padding: 12px; border-radius: var(--radius-sm); border-left: 3px solid #10b981;">
+                <div style="display: flex; justify-content: space-between;">
+                  <strong style="color: #34d399;">Fully Automated (389 / 58,3%)</strong>
+                  <span style="font-size: 0.8rem; color: #94a3b8;">Jadwal / Mandiri</span>
+                </div>
+                <div style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 4px;">
+                  Mendominasi <strong>Auto Housekeeping (96,4%)</strong>, <strong>Auto Restart (100%)</strong>, dan <strong>Auto Monitoring (81,1%)</strong> karena berjalan otomatis via crontab / widget 24x7.
+                </div>
+              </div>
+
+              <div style="background: rgba(59, 130, 246, 0.08); padding: 12px; border-radius: var(--radius-sm); border-left: 3px solid #3b82f6;">
+                <div style="display: flex; justify-content: space-between;">
+                  <strong style="color: #60a5fa;">Not Yet Triggered Automated (256 / 38,4%)</strong>
+                  <span style="font-size: 0.8rem; color: #94a3b8;">Event-Driven / Reaktif</span>
+                </div>
+                <div style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 4px;">
+                  Mendominasi <strong>Smart Healing (92,5%)</strong>, karena remediasi service failure hanya dipicu saat insiden terjadi secara reaktif di lingkungan produksi.
+                </div>
+              </div>
+
+              <div style="background: rgba(245, 158, 11, 0.08); padding: 12px; border-radius: var(--radius-sm); border-left: 3px solid #f59e0b;">
+                <div style="display: flex; justify-content: space-between;">
+                  <strong style="color: #fbbf24;">Partial Automated (22 / 3,3%)</strong>
+                  <span style="font-size: 0.8rem; color: #94a3b8;">Semi-Otomatis (Human-in-the-loop)</span>
+                </div>
+                <div style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 4px;">
+                  <strong>100.00% eksklusif</strong> pada <strong>Self Service Request</strong> (22 dari 22 baris). Contoh: aktivasi eSIM, cancel order FMC, query tiket yang masih butuh verifikasi operator.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Benefit Simulator & Grammar Rules -->
+        <div class="card" style="margin-bottom: 28px;">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Rekonstruksi Tata Bahasa Narasi Benefit (Benefit Grammar Engine)</h3>
+              <div class="card-subtitle">Pola Sintaks Linguistik Deterministik (100.00% Exact Match pada 667 Baris)</div>
+            </div>
+            <span class="badge badge-confirmed">CFM-02 &bull; 100% Match</span>
+          </div>
+
+          <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 20px;">
+            Investigasi forensik membuktikan kolom <code class="mono">Benefit</code> <strong>bukan dihasilkan AI generatif</strong>, 
+            melainkan diproduksi oleh 5 aturan tata bahasa terstruktur yang baku:
+          </p>
+
+          <!-- 5 Rules Pills -->
+          <div class="grid-3" style="margin-bottom: 24px;">
+            <div style="background: rgba(255,255,255,0.03); padding: 14px; border-radius: var(--radius-sm);">
+              <strong style="color: #818cf8; font-size: 0.85rem; display: block; margin-bottom: 4px;">RULE-BEN-01: Penskalaan Unit</strong>
+              <div style="font-size: 0.8rem; color: var(--text-secondary);">
+                &lt; 60 menit &rarr; <code class="mono">X minutes</code><br>
+                &ge; 60 menit &rarr; jika bulat <code class="mono">int(H) hours</code>, jika pecahan <code class="mono">H.1f hours</code>
+              </div>
+            </div>
+            <div style="background: rgba(255,255,255,0.03); padding: 14px; border-radius: var(--radius-sm);">
+              <strong style="color: #818cf8; font-size: 0.85rem; display: block; margin-bottom: 4px;">RULE-BEN-02: Klausul Durasi</strong>
+              <div style="font-size: 0.8rem; color: var(--text-secondary);">
+                Event = 1 &rarr; <code class="mono">(saving {D} minutes per event)</code><br>
+                Event &gt; 1 &rarr; <code class="mono">(saving {D} minutes per event across {E} monthly events)</code>
+              </div>
+            </div>
+            <div style="background: rgba(255,255,255,0.03); padding: 14px; border-radius: var(--radius-sm);">
+              <strong style="color: #818cf8; font-size: 0.85rem; display: block; margin-bottom: 4px;">RULE-BEN-03: Preposisi Tool</strong>
+              <div style="font-size: 0.8rem; color: var(--text-secondary);">
+                Umum &rarr; <code class="mono">via {Tool}</code><br>
+                CICD &rarr; <code class="mono">via CI/CD automation</code><br>
+                Not Automate &rarr; <code class="mono">through standardized automation</code>
+              </div>
+            </div>
+          </div>
+
+          <!-- Interactive Simulator Box -->
+          <div class="simulator-box">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+              <h4 style="font-size: 1.1rem; color: #fff; font-weight: 700;">Simulasi Live Generator Benefit (Deterministic Syntax)</h4>
+              <span class="badge badge-confirmed">Interactive Demo</span>
+            </div>
+
+            <!-- Presets -->
+            <div class="sim-presets">
+              <span style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Muat Preset Riil:</span>
+              <button class="sim-preset-btn" onclick="loadSimPreset('smart_healing')">CPQ (Smart Healing / AION)</button>
+              <button class="sim-preset-btn" onclick="loadSimPreset('monitoring')">MBP (Auto Monitoring / Grafana)</button>
+              <button class="sim-preset-btn" onclick="loadSimPreset('partial')">FMC Order (Partial / AION)</button>
+              <button class="sim-preset-btn" onclick="loadSimPreset('housekeeping')">Email Relay (Override / Shell)</button>
+              <button class="sim-preset-btn" onclick="loadSimPreset('zero_workload')">SIMA (Workload 0)</button>
+            </div>
+
+            <!-- Controls Form -->
+            <div class="sim-controls">
+              <div class="sim-field">
+                <label>Status Triggered</label>
+                <select id="simStatus" onchange="runBenefitSimulator()">
+                  <option value="Fully Automated">Fully Automated</option>
+                  <option value="Not Yet Triggered Automated" selected>Not Yet Triggered Automated</option>
+                  <option value="Partial Automated">Partial Automated</option>
+                </select>
+              </div>
+
+              <div class="sim-field">
+                <label>Category Action</label>
+                <select id="simAction" onchange="runBenefitSimulator()">
+                  <option value="Smart Healing" selected>Smart Healing</option>
+                  <option value="Auto Monitoring">Auto Monitoring</option>
+                  <option value="Self Service Request">Self Service Request</option>
+                  <option value="Auto Housekeeping">Auto Housekeeping</option>
+                  <option value="Health Check">Health Check</option>
+                  <option value="Auto Restart">Auto Restart</option>
+                </select>
+              </div>
+
+              <div class="sim-field">
+                <label>Tools Automation</label>
+                <select id="simTool" onchange="runBenefitSimulator()">
+                  <option value="AION" selected>AION</option>
+                  <option value="Shell Script">Shell Script</option>
+                  <option value="Grafana">Grafana</option>
+                  <option value="AO">AO</option>
+                  <option value="CICD">CICD</option>
+                  <option value="Not Automate">Not Automate</option>
+                </select>
+              </div>
+
+              <div class="sim-field">
+                <label>Durasi (Menit)</label>
+                <input type="number" id="simDuration" value="15" min="0" oninput="runBenefitSimulator()">
+              </div>
+
+              <div class="sim-field">
+                <label>Event Per Month</label>
+                <input type="number" id="simEvent" value="4" min="0" oninput="runBenefitSimulator()">
+              </div>
+            </div>
+
+            <!-- Result Box -->
+            <div class="sim-output-card">
+              <div class="sim-output-header">
+                <div>
+                  <span style="font-size: 0.8rem; font-weight: 700; color: #a5b4fc; text-transform: uppercase;">Hasil Kalimat Benefit Deterministik:</span>
+                </div>
+                <div class="sim-formula-pill" id="simWorkloadBadge">
+                  Workload: 60 menit (1 hours)
+                </div>
+              </div>
+              <div class="sim-output-text" id="simOutputText">
+                Generating benefit text...
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: VALIDATION & FINDINGS (CONFIDENCE MATRIX) -->
+    <section id="validation">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Bagian 5</span>
+          <h2 class="section-title">Validation & Findings (Confidence Matrix)</h2>
+          <p class="section-subtitle">
+            Klasifikasi derajat kepastian temuan forensik REA ke dalam 3 tier integritas: 
+            CONFIRMED (terbukti 100% matematis), INFERRED (pola data konsisten), dan UNRESOLVED (memerlukan keputusan SME).
+          </p>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="tabs-nav">
+          <button class="tab-btn active" onclick="switchMatrixTab('all', this)">Semua Temuan (13)</button>
+          <button class="tab-btn" onclick="switchMatrixTab('confirmed', this)">
+            <span class="badge badge-confirmed">CONFIRMED (5)</span>
+          </button>
+          <button class="tab-btn" onclick="switchMatrixTab('inferred', this)">
+            <span class="badge badge-inferred">INFERRED (5)</span>
+          </button>
+          <button class="tab-btn" onclick="switchMatrixTab('unresolved', this)">
+            <span class="badge badge-unresolved">UNRESOLVED (3)</span>
+          </button>
+          <button class="tab-btn" onclick="switchMatrixTab('exceptions', this)">
+            Katalog Anomali EXC (7)
+          </button>
+        </div>
+
+        <!-- Tab 1: Findings Grid -->
+        <div id="tab-findings" class="tab-pane active">
+          <div class="grid-3" id="matrixCardsContainer">
+            <!-- CFM-01 -->
+            <div class="card matrix-item confirmed" style="border-top: 4px solid #10b981;">
+              <div class="card-header">
+                <span class="badge badge-confirmed">CFM-01 &bull; CONFIRMED</span>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">Integritas: 100%</span>
+              </div>
+              <h4 style="font-size: 0.98rem; font-weight: 700; margin-bottom: 8px;">Deterministic Workload Calculation</h4>
+              <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 12px;">
+                Formula <code class="mono">Workload = Durasi &times; Event</code> valid 100.00% pada 667 dari 667 baris tanpa ada perkalian buatan atau estimasi heuristik.
+              </p>
+              <div style="font-size: 0.75rem; color: #34d399; font-weight: 600;">Bukti: Zero deviasi matematis</div>
+            </div>
+
+            <!-- CFM-02 -->
+            <div class="card matrix-item confirmed" style="border-top: 4px solid #10b981;">
+              <div class="card-header">
+                <span class="badge badge-confirmed">CFM-02 &bull; CONFIRMED</span>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">Integritas: 100%</span>
+              </div>
+              <h4 style="font-size: 0.98rem; font-weight: 700; margin-bottom: 8px;">Deterministic Benefit Text Grammar</h4>
+              <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 12px;">
+                Tata bahasa 5 template menghasilkan teks Benefit yang identik 100.00% (667/667 baris) karakter per karakter tanpa campur tangan LLM.
+              </p>
+              <div style="font-size: 0.75rem; color: #34d399; font-weight: 600;">Bukti: 667/667 Exact Match</div>
+            </div>
+
+            <!-- CFM-03 -->
+            <div class="card matrix-item confirmed" style="border-top: 4px solid #10b981;">
+              <div class="card-header">
+                <span class="badge badge-confirmed">CFM-03 &bull; CONFIRMED</span>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">Integritas: 100%</span>
+              </div>
+              <h4 style="font-size: 0.98rem; font-weight: 700; margin-bottom: 8px;">Snapshot Canonical Selection</h4>
+              <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 12px;">
+                Dataset 3.460 baris adalah kanonikal. Selisih 4 baris dari dataset 3.456 teridentifikasi lengkap dan tidak memengaruhi populasi 667 REA.
+              </p>
+              <div style="font-size: 0.75rem; color: #34d399; font-weight: 600;">Bukti: Checksum SHA-256 Terverifikasi</div>
+            </div>
+
+            <!-- CFM-04 -->
+            <div class="card matrix-item confirmed" style="border-top: 4px solid #10b981;">
+              <div class="card-header">
+                <span class="badge badge-confirmed">CFM-04 &bull; CONFIRMED</span>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">Integritas: 100%</span>
+              </div>
+              <h4 style="font-size: 0.98rem; font-weight: 700; margin-bottom: 8px;">Row Identity Linkage</h4>
+              <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 12px;">
+                Kunci relasi <code class="mono">CONCAT</code> (CSV) terhubung 100% ke <code class="mono">activity_id</code> (Core) melalui sanitasi trailing whitespace (<code class="mono">.strip()</code>).
+              </p>
+              <div style="font-size: 0.75rem; color: #34d399; font-weight: 600;">Bukti: 658 exact + 9 stripped</div>
+            </div>
+
+            <!-- CFM-05 -->
+            <div class="card matrix-item confirmed" style="border-top: 4px solid #10b981;">
+              <div class="card-header">
+                <span class="badge badge-confirmed">CFM-05 &bull; CONFIRMED</span>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">Integritas: 100%</span>
+              </div>
+              <h4 style="font-size: 0.98rem; font-weight: 700; margin-bottom: 8px;">Numeric Overrides Audit</h4>
+              <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 12px;">
+                Tepat 2 baris mengalami penyesuaian angka di benchmark (Email Relay External & Elisa DB Log) dengan formula konsisten.
+              </p>
+              <div style="font-size: 0.75rem; color: #34d399; font-weight: 600;">Bukti: 665 identik + 2 audit trail</div>
+            </div>
+
+            <!-- INF-01 -->
+            <div class="card matrix-item inferred" style="border-top: 4px solid #3b82f6;">
+              <div class="card-header">
+                <span class="badge badge-inferred">INF-01 &bull; INFERRED</span>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">Keyakinan: Tinggi</span>
+              </div>
+              <h4 style="font-size: 0.98rem; font-weight: 700; margin-bottom: 8px;">Selection Eligibility Filter</h4>
+              <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 12px;">
+                Kriteria seleksi utama adalah <code class="mono">Already Automation</code> + <code class="mono">Phase 1</code> + <code class="mono">Workload > 0</code>, menjelaskan 98,65% data terpilih.
+              </p>
+              <div style="font-size: 0.75rem; color: #60a5fa; font-weight: 600;">Korelasi: 658/667 aktivitas</div>
+            </div>
+
+            <!-- INF-02 -->
+            <div class="card matrix-item inferred" style="border-top: 4px solid #3b82f6;">
+              <div class="card-header">
+                <span class="badge badge-inferred">INF-02 &bull; INFERRED</span>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">Keyakinan: Tinggi</span>
+              </div>
+              <h4 style="font-size: 0.98rem; font-weight: 700; margin-bottom: 8px;">Partial Automated Exclusivity</h4>
+              <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 12px;">
+                Status Partial Automated secara eksklusif diperuntukkan bagi aktivitas Self Service Request yang masih memerlukan verifikasi intervensi operator.
+              </p>
+              <div style="font-size: 0.75rem; color: #60a5fa; font-weight: 600;">Korelasi: 22/22 (100% eksklusif)</div>
+            </div>
+
+            <!-- INF-03 -->
+            <div class="card matrix-item inferred" style="border-top: 4px solid #3b82f6;">
+              <div class="card-header">
+                <span class="badge badge-inferred">INF-03 &bull; INFERRED</span>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">Keyakinan: Tinggi</span>
+              </div>
+              <h4 style="font-size: 0.98rem; font-weight: 700; margin-bottom: 8px;">Reactive vs Scheduled Triggering</h4>
+              <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 12px;">
+                Smart Healing mayoritas (92,5%) adalah Not Yet Triggered karena reaktif, sedangkan Housekeeping & Monitoring mayoritas (81-96%) Fully Automated.
+              </p>
+              <div style="font-size: 0.75rem; color: #60a5fa; font-weight: 600;">Korelasi: Pola operasional SOP</div>
+            </div>
+
+            <!-- INF-04 -->
+            <div class="card matrix-item inferred" style="border-top: 4px solid #3b82f6;">
+              <div class="card-header">
+                <span class="badge badge-inferred">INF-04 &bull; INFERRED</span>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">Keyakinan: Tinggi</span>
+              </div>
+              <h4 style="font-size: 0.98rem; font-weight: 700; margin-bottom: 8px;">Tooling Upgrades Provenance</h4>
+              <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 12px;">
+                93 aktivitas Not Automate ditingkatkan ke AION karena ketersediaan kapabilitas orkestrasi platform AION pada runbook L1.
+              </p>
+              <div style="font-size: 0.75rem; color: #60a5fa; font-weight: 600;">Korelasi: SOP AION Roadmap</div>
+            </div>
+
+            <!-- INF-05 -->
+            <div class="card matrix-item inferred" style="border-top: 4px solid #3b82f6;">
+              <div class="card-header">
+                <span class="badge badge-inferred">INF-05 &bull; INFERRED</span>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">Keyakinan: Heuristik</span>
+              </div>
+              <h4 style="font-size: 0.98rem; font-weight: 700; margin-bottom: 8px;">Category Action Heuristic Rules</h4>
+              <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 12px;">
+                6 taksonomi tindakan dapat diprediksi hingga 87,86% menggunakan aturan kata kunci nama aktivitas, dengan 12,14% deviasi nuansa konteks SME.
+              </p>
+              <div style="font-size: 0.75rem; color: #60a5fa; font-weight: 600;">Akurasi: 586 / 667 baris</div>
+            </div>
+
+            <!-- UNR-01 -->
+            <div class="card matrix-item unresolved" style="border-top: 4px solid #f59e0b;">
+              <div class="card-header">
+                <span class="badge badge-unresolved">UNR-01 &bull; UNRESOLVED</span>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">Perlu Klarifikasi</span>
+              </div>
+              <h4 style="font-size: 0.98rem; font-weight: 700; margin-bottom: 8px;">Logika Eliminasi 258 Baris Terkurasi</h4>
+              <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 12px;">
+                Belum ada formula matematis formal untuk membedakan otomatis 258 baris Already Automation yang ditolak selain pertimbangan kurasi diskresioner SME.
+              </p>
+              <div style="font-size: 0.75rem; color: #fbbf24; font-weight: 600;">Tindakan: SME Policy Definition</div>
+            </div>
+
+            <!-- UNR-02 -->
+            <div class="card matrix-item unresolved" style="border-top: 4px solid #f59e0b;">
+              <div class="card-header">
+                <span class="badge badge-unresolved">UNR-02 &bull; UNRESOLVED</span>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">Perlu Keputusan</span>
+              </div>
+              <h4 style="font-size: 0.98rem; font-weight: 700; margin-bottom: 8px;">Standarisasi Category Action Masa Depan</h4>
+              <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 12px;">
+                Keputusan arsitektur apakah Worklens akan menggunakan Classifier AI / LLM atau Decision Tree deterministik untuk mengklasifikasi 2.793 aktivitas non-REA.
+              </p>
+              <div style="font-size: 0.75rem; color: #fbbf24; font-weight: 600;">Tindakan: ADR Milestone 4 Architecture</div>
+            </div>
+
+            <!-- UNR-03 -->
+            <div class="card matrix-item unresolved" style="border-top: 4px solid #f59e0b;">
+              <div class="card-header">
+                <span class="badge badge-unresolved">UNR-03 &bull; UNRESOLVED</span>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">Perlu Integrasi</span>
+              </div>
+              <h4 style="font-size: 0.98rem; font-weight: 700; margin-bottom: 8px;">Penetapan Status Triggered Otomatis</h4>
+              <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 12px;">
+                Menentukan metadata tambahan apa dari monitoring/crontab produksi yang dapat membedakan Fully Automated vs Not Yet Triggered secara otomatis.
+              </p>
+              <div style="font-size: 0.75rem; color: #fbbf24; font-weight: 600;">Tindakan: Monitoring Telemetry Integration</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2: Exception Catalog -->
+        <div id="tab-exceptions" class="tab-pane">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Katalog Anomali & Pengecualian Data (EXC-01 s/d EXC-07)</h3>
+                <div class="card-subtitle">Daftar Anomali Spesifik dan Rekomendasi Penanganan Resmi</div>
+              </div>
+              <span class="badge badge-confirmed">Audit Trail Lengkap</span>
+            </div>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Kode</th>
+                    <th>Kategori Masalah</th>
+                    <th>Baris Terkena Dampak</th>
+                    <th>Deskripsi Anomali & Nilai Aktual</th>
+                    <th>Rekomendasi Penanganan Worklens</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong class="mono" style="color: #f87171;">EXC-01</strong></td>
+                    <td>Nilai Numerik Diubah</td>
+                    <td>Baris 609</td>
+                    <td><code class="mono">Email Relay External - Housekeeping</code>: Durasi diubah 30 &rarr; 5 menit.</td>
+                    <td>Pertahankan nilai CSV pada benchmark; catat audit trail di pipeline.</td>
+                  </tr>
+                  <tr>
+                    <td><strong class="mono" style="color: #f87171;">EXC-02</strong></td>
+                    <td>Frekuensi Diubah</td>
+                    <td>Baris 592</td>
+                    <td><code class="mono">Elisa - Check Log Elisa di DB</code>: Event diubah 30 &rarr; 1 kejadian.</td>
+                    <td>Pertahankan nilai CSV pada benchmark; catat audit trail di pipeline.</td>
+                  </tr>
+                  <tr>
+                    <td><strong class="mono" style="color: #fbbf24;">EXC-03</strong></td>
+                    <td>Trailing Whitespace</td>
+                    <td>9 baris</td>
+                    <td>Spasi di ujung string <code class="mono">CONCAT</code> (contoh: <code class="mono">'C2P - Check ... '</code>).</td>
+                    <td>Wajib aplikasikan <code class="mono">.strip()</code> pada seluruh operasi join dan lookup.</td>
+                  </tr>
+                  <tr>
+                    <td><strong class="mono" style="color: #fbbf24;">EXC-04</strong></td>
+                    <td>Workload Bernilai Nol</td>
+                    <td>Baris 308, 309</td>
+                    <td>Workload 0 di REA (<code class="mono">SIMA - Monitoring Storage Usage</code> & Housekeeping).</td>
+                    <td>Gunakan template benefit non-menit khusus (<code class="mono">RULE-BEN-05</code>).</td>
+                  </tr>
+                  <tr>
+                    <td><strong class="mono" style="color: #fbbf24;">EXC-05</strong></td>
+                    <td>Preposisi Ganda</td>
+                    <td>Baris 644, 645</td>
+                    <td>Tool Not Automate menghasilkan frasa <code class="mono">through standardized automation through</code>.</td>
+                    <td>Pertahankan sintaks asli demi menjaga 100% konsistensi benchmark.</td>
+                  </tr>
+                  <tr>
+                    <td><strong class="mono" style="color: #60a5fa;">EXC-06</strong></td>
+                    <td>Status Non-Automated Lolos</td>
+                    <td>9 baris</td>
+                    <td>7 baris Dismantled dan 2 baris Not Possible Automate diloloskan ke REA.</td>
+                    <td>Kelola via <em>SME Exception Inclusion List</em>; jangan di-drop otomatis.</td>
+                  </tr>
+                  <tr>
+                    <td><strong class="mono" style="color: #34d399;">EXC-07</strong></td>
+                    <td>Typo Kategori di Core</td>
+                    <td>4 baris</td>
+                    <td>Nilai <code class="mono">Already Automated</code> alih-alih <code class="mono">Already Automation</code> pada Core.</td>
+                    <td>Normalisasikan variasi string typo ke bentuk kanonikal baku.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 6: CONCLUSION & WORKFLOW -->
+    <section id="conclusion">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Bagian 6</span>
+          <h2 class="section-title">Kesimpulan & Alur Rekonstruksi REA</h2>
+          <p class="section-subtitle">
+            Alur tiga pilar utama rekonstruksi REA: Selection &rarr; Transformation &rarr; Enrichment, 
+            serta panduan tata kelola arsitektur implementasi engine Worklens.
+          </p>
+        </div>
+
+        <!-- 3-Stage Pipeline Diagram -->
+        <div class="pipeline-flow">
+          <!-- Step 1 -->
+          <div class="flow-node active-node">
+            <span class="flow-step-num">TAHAP 1</span>
+            <h4 style="font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 8px;">1. Selection Funnel</h4>
+            <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 12px;">
+              Penyaringan 3.460 baris mentah menjadi 667 aktivitas terpilih melalui 4 filter deterministik (status, beban, fase, aplikasi) ditambah kurasi diskresioner SME.
+            </p>
+            <div style="font-size: 0.75rem; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px;">
+              <div style="color: #34d399;">&bull; 658 Already Automation (98,65%)</div>
+              <div style="color: #fbbf24;">&bull; 9 Pengecualian Manual SME (1,35%)</div>
+              <div style="color: #94a3b8;">&bull; 2.793 Tereliminasi (89,9% via rule)</div>
+            </div>
+          </div>
+
+          <div class="flow-arrow">&rarr;</div>
+
+          <!-- Step 2 -->
+          <div class="flow-node active-node">
+            <span class="flow-step-num">TAHAP 2</span>
+            <h4 style="font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 8px;">2. Transformation</h4>
+            <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 12px;">
+              Normalisasi skema 37 ke 8 atribut, pencocokan ID 100% via strip spasi, penegakan formula workload, dan eskalasi 127 perkakas otomasi ke AION.
+            </p>
+            <div style="font-size: 0.75rem; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px;">
+              <div style="color: #34d399;">&bull; 100% Formula: Durasi &times; Event</div>
+              <div style="color: #a5b4fc;">&bull; 127 Tools Automation Upgrade</div>
+              <div style="color: #60a5fa;">&bull; 2 Numeric Override Disahkan</div>
+            </div>
+          </div>
+
+          <div class="flow-arrow">&rarr;</div>
+
+          <!-- Step 3 -->
+          <div class="flow-node active-node">
+            <span class="flow-step-num">TAHAP 3</span>
+            <h4 style="font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 8px;">3. Enrichment Engine</h4>
+            <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 12px;">
+              Pengayaan kolom operasional: taksonomi 6 Category Action, penetapan 3 Status Triggered kesiapan produksi, dan 100% deterministik Benefit Grammar.
+            </p>
+            <div style="font-size: 0.75rem; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px;">
+              <div style="color: #34d399;">&bull; 6 Category Action (87,9% heuristik)</div>
+              <div style="color: #60a5fa;">&bull; 3 Status Kematangan Triggered</div>
+              <div style="color: #34d399;">&bull; 100.00% Exact Match Grammar</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Architecture Rules & Immutability -->
+        <div class="grid-3" style="margin-top: 32px;">
+          <div class="card">
+            <h4 style="font-size: 0.95rem; font-weight: 700; color: #cbd5e1; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+              <span style="color: #f87171;">&#128274;</span> Prinsip Immutability Sumber
+            </h4>
+            <p style="font-size: 0.82rem; color: var(--text-secondary);">
+              Dataset mentah (<code class="mono">breakdown_activity...json</code>) dan benchmark (<code class="mono">Improvements_With_Benefit.csv</code>) bersifat <strong>READ-ONLY mutlak</strong>. Tidak boleh ada skrip yang mengubah atau menimpa dataset sumber.
+            </p>
+          </div>
+
+          <div class="card">
+            <h4 style="font-size: 0.95rem; font-weight: 700; color: #cbd5e1; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+              <span style="color: #34d399;">&#9878;</span> Pemisahan Logika Deterministik vs AI
+            </h4>
+            <p style="font-size: 0.82rem; color: var(--text-secondary);">
+              Perhitungan Workload dan narasi Benefit adalah fungsi deterministik murni berkecepatan mikrodetik. AI generatif dilarang keras menghitung angka beban kerja demi mencegah halusinasi.
+            </p>
+          </div>
+
+          <div class="card">
+            <h4 style="font-size: 0.95rem; font-weight: 700; color: #cbd5e1; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+              <span style="color: #818cf8;">&#9889;</span> Prinsip Ponytail (YAGNI)
+            </h4>
+            <p style="font-size: 0.82rem; color: var(--text-secondary);">
+              Solusi dibangun dengan standard library dan struktur data in-memory ringan tanpa menambahkan dependensi database server atau lapisan abstraksi yang tidak diperlukan.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container footer-inner">
+      <div>
+        <div style="font-weight: 700; color: #cbd5e1; margin-bottom: 4px;">WORKLENS Workload Intelligence Platform</div>
+        <div>Dokumen Induk: <code class="mono" style="color: #94a3b8;">docs/enrichment/discovery/REA_REVERSE_ENGINEERING.md</code></div>
+      </div>
+      <div style="text-align: right;">
+        <div class="badge badge-confirmed">Audit Baseline 100% Complete</div>
+        <div style="margin-top: 4px; font-size: 0.78rem;">Status Repository: Active on <code class="mono" style="color: #818cf8;">develop</code></div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Vanilla JavaScript Logic & Charts -->
+  <script>
+    // --- CHART.JS CONFIGURATION ---
+    Chart.defaults.color = '#94a3b8';
+    Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+
+    // 1. Overview Donut Chart
+    const ctxOverview = document.getElementById('overviewDonutChart').getContext('2d');
+    new Chart(ctxOverview, {
+      type: 'doughnut',
+      data: {
+        labels: ['Terpilih REA (667)', 'Non-REA Tereliminasi (2.793)'],
+        datasets: [{
+          data: [667, 2793],
+          backgroundColor: ['#10b981', '#334155'],
+          borderWidth: 2,
+          borderColor: '#111827',
+          hoverOffset: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { boxWidth: 12, padding: 16 }
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                const total = 3460;
+                const val = context.raw;
+                const pct = ((val / total) * 100).toFixed(2);
+                return ` ${context.label}: ${val} record (${pct}%)`;
+              }
+            }
+          }
+        },
+        cutout: '72%'
+      }
+    });
+
+    // 2. Rejection Funnel Chart
+    const ctxFunnel = document.getElementById('rejectionFunnelChart').getContext('2d');
+    new Chart(ctxFunnel, {
+      type: 'bar',
+      data: {
+        labels: [
+          'Status Non-Otomasi',
+          'Workload 0 / Blank',
+          'Kurasi Manual SME',
+          'Aplikasi Out-of-Scope',
+          'Phase 2'
+        ],
+        datasets: [{
+          label: 'Jumlah Baris Tereliminasi',
+          data: [1975, 510, 258, 47, 3],
+          backgroundColor: [
+            '#ef4444',
+            '#f97316',
+            '#f59e0b',
+            '#64748b',
+            '#475569'
+          ],
+          borderRadius: 6
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(ctx) {
+                const totalNonRea = 2793;
+                const pct = ((ctx.raw / totalNonRea) * 100).toFixed(2);
+                return ` Tereliminasi: ${ctx.raw} baris (${pct}%)`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { color: 'rgba(255,255,255,0.05)' }
+          },
+          y: {
+            grid: { display: false }
+          }
+        }
+      }
+    });
+
+    // 3. Tools Transform Bar Chart
+    const ctxTools = document.getElementById('toolsTransformChart').getContext('2d');
+    new Chart(ctxTools, {
+      type: 'bar',
+      data: {
+        labels: [
+          'Not Automate -> AION',
+          'Shell casing standard',
+          'Not Automate -> Shell',
+          'Shell -> Grafana',
+          'Shell -> AION',
+          'AION -> AO',
+          'Not Automate -> Grafana'
+        ],
+        datasets: [{
+          label: 'Jumlah Baris',
+          data: [93, 14, 6, 8, 3, 2, 1],
+          backgroundColor: '#6366f1',
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              afterLabel: function(ctx) {
+                if (ctx.dataIndex === 0) return 'Eskalasi kapabilitas runbook AION L1';
+                if (ctx.dataIndex === 1) return 'Standardisasi Title Case pada CSV';
+                return '';
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            grid: { color: 'rgba(255,255,255,0.05)' }
+          },
+          x: {
+            grid: { display: false },
+            ticks: {
+              maxRotation: 35,
+              minRotation: 35,
+              font: { size: 10 }
+            }
+          }
+        }
+      }
+    });
+
+    // 4. Category Action Chart
+    const ctxAction = document.getElementById('categoryActionChart').getContext('2d');
+    new Chart(ctxAction, {
+      type: 'doughnut',
+      data: {
+        labels: [
+          'Smart Healing (199)',
+          'Auto Monitoring (190)',
+          'Self Service Request (120)',
+          'Auto Housekeeping (112)',
+          'Health Check (37)',
+          'Auto Restart (9)'
+        ],
+        datasets: [{
+          data: [199, 190, 120, 112, 37, 9],
+          backgroundColor: [
+            '#6366f1',
+            '#3b82f6',
+            '#06b6d4',
+            '#10b981',
+            '#f59e0b',
+            '#ec4899'
+          ],
+          borderWidth: 2,
+          borderColor: '#111827'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'right',
+            labels: { boxWidth: 12, padding: 12, font: { size: 11 } }
+          }
+        },
+        cutout: '65%'
+      }
+    });
+
+    // 5. Status Triggered Stacked / Grouped
+    const ctxStatus = document.getElementById('statusTriggeredChart').getContext('2d');
+    new Chart(ctxStatus, {
+      type: 'bar',
+      data: {
+        labels: ['Smart Healing', 'Auto Monitoring', 'Self Service', 'Housekeeping', 'Health Check', 'Auto Restart'],
+        datasets: [
+          {
+            label: 'Fully Automated (389)',
+            data: [15, 154, 98, 108, 5, 9],
+            backgroundColor: '#10b981'
+          },
+          {
+            label: 'Not Yet Triggered (256)',
+            data: [184, 36, 0, 4, 32, 0],
+            backgroundColor: '#3b82f6'
+          },
+          {
+            label: 'Partial Automated (22)',
+            data: [0, 0, 22, 0, 0, 0],
+            backgroundColor: '#f59e0b'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: {
+            stacked: true,
+            grid: { display: false }
+          },
+          y: {
+            stacked: true,
+            grid: { color: 'rgba(255,255,255,0.05)' }
+          }
+        },
+        plugins: {
+          legend: {
+            position: 'top',
+            labels: { boxWidth: 12, padding: 12 }
+          },
+          tooltip: {
+            callbacks: {
+              afterBody: function(tooltipItems) {
+                if (tooltipItems[0].label === 'Self Service') {
+                  return 'Catatan: 22 Partial Automated eksklusif pada Self Service Request.';
+                }
+              }
+            }
+          }
+        }
+      }
+    });
+
+    // --- BENEFIT GRAMMAR ENGINE (DETERMINISTIC SIMULATOR) ---
+    const ACTION_PHRASES = {
+      'Smart Healing': 'automated fault detection and self-healing recovery',
+      'Auto Monitoring': 'continuous proactive monitoring and real-time anomaly detection',
+      'Self Service Request': 'streamlined self-service execution and eliminating manual ticket handling',
+      'Auto Housekeeping': 'scheduled automated log and disk housekeeping',
+      'Health Check': 'automated system health checks and proactive issue prevention',
+      'Auto Restart': 'automated service restarts and rapid downtime mitigation'
+    };
+
+    function runBenefitSimulator() {
+      const status = document.getElementById('simStatus').value;
+      const action = document.getElementById('simAction').value;
+      const tool = document.getElementById('simTool').value;
+      const duration = parseFloat(document.getElementById('simDuration').value) || 0;
+      const event = parseFloat(document.getElementById('simEvent').value) || 0;
+
+      const workload = duration * event;
+      const actionPhrase = ACTION_PHRASES[action] || 'standard operational workflow';
+
+      // Tool Clause (RULE-BEN-03)
+      let toolClause = `via ${tool}`;
+      if (tool === 'CICD') {
+        toolClause = 'via CI/CD automation';
+      } else if (tool === 'Not Automate') {
+        toolClause = 'through standardized automation';
+      }
+
+      // Special Case Workload 0 (RULE-BEN-05)
+      if (workload === 0) {
+        document.getElementById('simWorkloadBadge').innerText = 'Workload: 0 menit (Special Rule EXC-04)';
+        let prefix = (status === 'Not Yet Triggered Automated') ? 'Potentially minimizes' : 'Minimizes';
+        let onceAutomated = (status === 'Not Yet Triggered Automated') ? 'once automated' : '';
+        let sentence = `${prefix} manual intervention time and accelerates system recovery ${onceAutomated} ${toolClause} through ${actionPhrase}.`.replace(/\s+/g, ' ');
+        document.getElementById('simOutputText').innerText = sentence;
+        return;
+      }
+
+      // Unit Scaling (RULE-BEN-01)
+      let workloadStr = '';
+      if (workload < 60) {
+        workloadStr = `${workload} minutes`;
+      } else {
+        const hours = workload / 60.0;
+        if (Number.isInteger(hours)) {
+          workloadStr = `${hours} hours`;
+        } else {
+          workloadStr = `${hours.toFixed(1)} hours`;
+        }
+      }
+
+      document.getElementById('simWorkloadBadge').innerText = `Workload: ${workload} menit (${workloadStr})`;
+
+      // Duration & Frequency Clause (RULE-BEN-02)
+      let durClause = '';
+      if (event === 1) {
+        durClause = `(saving ${duration} minutes per event)`;
+      } else {
+        durClause = `(saving ${duration} minutes per event across ${event} monthly events)`;
+      }
+
+      // Template Formulation (RULE-BEN-04)
+      let sentence = '';
+      if (status === 'Fully Automated') {
+        sentence = `Eliminates ${workloadStr} of manual operational workload per month ${durClause} ${toolClause} through ${actionPhrase}.`;
+      } else if (status === 'Not Yet Triggered Automated') {
+        sentence = `Potentially eliminates ${workloadStr} of manual operational workload per month ${durClause} once automated ${toolClause} through ${actionPhrase}.`;
+      } else if (status === 'Partial Automated') {
+        sentence = `Reduces monthly operational workload by ${workloadStr} ${durClause} ${toolClause} through ${actionPhrase}.`;
+      }
+
+      document.getElementById('simOutputText').innerText = sentence.replace(/\s+/g, ' ');
+    }
+
+    function loadSimPreset(presetKey) {
+      if (presetKey === 'smart_healing') {
+        document.getElementById('simStatus').value = 'Not Yet Triggered Automated';
+        document.getElementById('simAction').value = 'Smart Healing';
+        document.getElementById('simTool').value = 'AION';
+        document.getElementById('simDuration').value = 15;
+        document.getElementById('simEvent').value = 4;
+      } else if (presetKey === 'monitoring') {
+        document.getElementById('simStatus').value = 'Fully Automated';
+        document.getElementById('simAction').value = 'Auto Monitoring';
+        document.getElementById('simTool').value = 'Grafana';
+        document.getElementById('simDuration').value = 10;
+        document.getElementById('simEvent').value = 30;
+      } else if (presetKey === 'partial') {
+        document.getElementById('simStatus').value = 'Partial Automated';
+        document.getElementById('simAction').value = 'Self Service Request';
+        document.getElementById('simTool').value = 'AION';
+        document.getElementById('simDuration').value = 20;
+        document.getElementById('simEvent').value = 15;
+      } else if (presetKey === 'housekeeping') {
+        document.getElementById('simStatus').value = 'Fully Automated';
+        document.getElementById('simAction').value = 'Auto Housekeeping';
+        document.getElementById('simTool').value = 'Shell Script';
+        document.getElementById('simDuration').value = 5;
+        document.getElementById('simEvent').value = 1;
+      } else if (presetKey === 'zero_workload') {
+        document.getElementById('simStatus').value = 'Not Yet Triggered Automated';
+        document.getElementById('simAction').value = 'Auto Housekeeping';
+        document.getElementById('simTool').value = 'AION';
+        document.getElementById('simDuration').value = 0;
+        document.getElementById('simEvent').value = 0;
+      }
+      runBenefitSimulator();
+    }
+
+    // Initialize Simulator on Load
+    runBenefitSimulator();
+
+    // --- TAB SWITCHING LOGIC ---
+    function switchMatrixTab(tabName, btnElement) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btnElement.classList.add('active');
+
+      if (tabName === 'exceptions') {
+        document.getElementById('tab-findings').classList.remove('active');
+        document.getElementById('tab-exceptions').classList.add('active');
+        return;
+      }
+
+      document.getElementById('tab-exceptions').classList.remove('active');
+      document.getElementById('tab-findings').classList.add('active');
+
+      const items = document.querySelectorAll('.matrix-item');
+      items.forEach(card => {
+        if (tabName === 'all') {
+          card.style.display = 'block';
+        } else if (card.classList.contains(tabName)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    // --- ACTIVE NAV LINK SPY ---
+    window.addEventListener('scroll', () => {
+      const sections = document.querySelectorAll('section');
+      const navLinks = document.querySelectorAll('.nav-links a');
+      let currentSectionId = '';
+
+      sections.forEach(section => {
+        const top = section.offsetTop - 100;
+        const height = section.offsetHeight;
+        if (window.scrollY >= top && window.scrollY < top + height) {
+          currentSectionId = section.getAttribute('id');
+        }
+      });
+
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === `#${currentSectionId}`) {
+          link.classList.add('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
+

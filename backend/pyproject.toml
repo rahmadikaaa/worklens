@@ -30,5 +30,7 @@ python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
 filterwarnings = [
-    "ignore::pytest.PytestRemovedIn10Warning",
+    "ignore::pytest.PytestRemovedIn10Warning:anyio.*",
+    "ignore::starlette.exceptions.StarletteDeprecationWarning",
 ]
+

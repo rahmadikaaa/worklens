@@ -1,0 +1,1856 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WORKLENS — REA Benefit Column Deep-Dive Analysis</title>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-body: #0b0f19;
+      --bg-surface: #111827;
+      --bg-card: #1a2234;
+      --bg-card-hover: #222d42;
+      --border-color: rgba(255, 255, 255, 0.08);
+      
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      
+      --primary: #6366f1;
+      --primary-light: #818cf8;
+      --primary-glow: rgba(99, 102, 241, 0.2);
+      
+      --confirmed: #10b981;
+      --confirmed-bg: rgba(16, 185, 129, 0.12);
+      --confirmed-border: rgba(16, 185, 129, 0.35);
+      
+      --inferred: #3b82f6;
+      --inferred-bg: rgba(59, 130, 246, 0.12);
+      --inferred-border: rgba(59, 130, 246, 0.35);
+      
+      --unresolved: #f59e0b;
+      --unresolved-bg: rgba(245, 158, 11, 0.12);
+      --unresolved-border: rgba(245, 158, 11, 0.35);
+
+      --danger: #ef4444;
+      
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+      
+      --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg-body);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    code, pre, .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .container {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Top Sticky Header */
+    header.top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(16px);
+      background: rgba(11, 15, 25, 0.88);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 70px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .brand-logo {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, #10b981, #6366f1);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.15rem;
+      color: #fff;
+      box-shadow: 0 2px 10px rgba(16, 185, 129, 0.4);
+    }
+
+    .brand-title {
+      font-weight: 800;
+      font-size: 1.12rem;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-tag {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #34d399;
+      border-radius: var(--radius-full);
+      letter-spacing: 0.05em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 6px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.86rem;
+      font-weight: 600;
+      padding: 8px 13px;
+      border-radius: var(--radius-full);
+      transition: all 0.2s ease;
+    }
+
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--text-primary);
+      background: var(--bg-card);
+    }
+
+    .nav-links a.active {
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .badge-confirmed {
+      background: var(--confirmed-bg);
+      color: #34d399;
+      border: 1px solid var(--confirmed-border);
+    }
+
+    .badge-inferred {
+      background: var(--inferred-bg);
+      color: #60a5fa;
+      border: 1px solid var(--inferred-border);
+    }
+
+    .badge-unresolved {
+      background: var(--unresolved-bg);
+      color: #fbbf24;
+      border: 1px solid var(--unresolved-border);
+    }
+
+    /* Hero Section */
+    .hero {
+      padding: 48px 0 32px;
+      border-bottom: 1px solid var(--border-color);
+      background: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.12) 0%, transparent 65%);
+    }
+
+    .hero-pretitle {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #34d399;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hero-title {
+      font-size: 2.35rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #ffffff 40%, #a7f3d0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-desc {
+      font-size: 1.05rem;
+      color: var(--text-secondary);
+      max-width: 860px;
+      margin-bottom: 24px;
+    }
+
+    .hero-meta-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding: 14px 20px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+    }
+
+    .hero-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hero-meta-item strong {
+      color: var(--text-primary);
+    }
+
+    /* Sections */
+    section {
+      padding: 56px 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .section-header {
+      margin-bottom: 32px;
+    }
+
+    .section-tag {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #34d399;
+      margin-bottom: 6px;
+      display: inline-block;
+    }
+
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+      color: var(--text-primary);
+    }
+
+    .section-subtitle {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      max-width: 860px;
+    }
+
+    /* Grids & Cards */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      box-shadow: var(--shadow-card);
+      position: relative;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* KPI Stats */
+    .kpi-card {
+      padding: 20px 22px;
+      border-radius: var(--radius-md);
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--primary);
+    }
+
+    .kpi-card.kpi-emerald::before { background: var(--confirmed); }
+    .kpi-card.kpi-blue::before { background: var(--inferred); }
+    .kpi-card.kpi-amber::before { background: var(--unresolved); }
+
+    .kpi-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .kpi-value {
+      font-size: 2.15rem;
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .kpi-subtext {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+    }
+
+    /* Tables */
+    .table-container {
+      overflow-x: auto;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      background: var(--bg-surface);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.86rem;
+    }
+
+    thead {
+      background: rgba(255, 255, 255, 0.03);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    th {
+      padding: 12px 16px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      font-size: 0.74rem;
+      letter-spacing: 0.05em;
+    }
+
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--text-primary);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    /* Pipeline Diagram */
+    .grammar-pipeline {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin: 24px 0;
+    }
+
+    .pipeline-stage {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 20px;
+      align-items: center;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      position: relative;
+    }
+
+    .pipeline-stage-label {
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: #a5b4fc;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pipeline-stage-content {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    /* Callout & Alerts */
+    .callout {
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      margin: 18px 0;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      border: 1px solid transparent;
+    }
+
+    .callout-info {
+      background: rgba(59, 130, 246, 0.08);
+      border-color: rgba(59, 130, 246, 0.25);
+      color: #bfdbfe;
+    }
+
+    .callout-warning {
+      background: rgba(245, 158, 11, 0.08);
+      border-color: rgba(245, 158, 11, 0.25);
+      color: #fde68a;
+    }
+
+    .callout-success {
+      background: rgba(16, 185, 129, 0.08);
+      border-color: rgba(16, 185, 129, 0.25);
+      color: #a7f3d0;
+    }
+
+    .callout-icon {
+      font-size: 1.25rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* Real Example Cards */
+    .example-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin-bottom: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .example-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: #6366f1;
+    }
+
+    .example-card.ex-fully::before { background: #10b981; }
+    .example-card.ex-notyet::before { background: #3b82f6; }
+    .example-card.ex-partial::before { background: #f59e0b; }
+    .example-card.ex-special::before { background: #ec4899; }
+
+    .example-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .example-title {
+      font-size: 1.02rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .example-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 10px;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      margin-bottom: 14px;
+      font-size: 0.8rem;
+    }
+
+    .example-grid-item span {
+      display: block;
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .example-grid-item strong {
+      color: #f1f5f9;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .example-benefit-box {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: #f8fafc;
+    }
+
+    .benefit-highlight-verb { color: #34d399; font-weight: 700; }
+    .benefit-highlight-time { color: #f59e0b; font-weight: 700; }
+    .benefit-highlight-clause { color: #93c5fd; }
+    .benefit-highlight-tool { color: #a5b4fc; font-weight: 600; }
+    .benefit-highlight-action { color: #e2e8f0; font-style: italic; }
+
+    /* Interactive Playground */
+    .playground-box {
+      background: linear-gradient(145deg, #131c31 0%, #0f172a 100%);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .pg-controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .pg-field label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+
+    .pg-field select, .pg-field input {
+      width: 100%;
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #f8fafc;
+      padding: 9px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .pg-field select:focus, .pg-field input:focus {
+      border-color: #34d399;
+      box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25);
+    }
+
+    .pg-output-box {
+      background: #090d16;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      position: relative;
+    }
+
+    /* Template slot syntax visual */
+    .template-builder {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin: 14px 0;
+      padding: 14px;
+      background: rgba(0, 0, 0, 0.35);
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+    }
+
+    .slot {
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+    }
+
+    .slot-verb { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+    .slot-workload { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+    .slot-duration { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+    .slot-tool { background: rgba(99, 102, 241, 0.2); color: #a5b4fc; border: 1px solid rgba(99, 102, 241, 0.4); }
+    .slot-action { background: rgba(236, 72, 153, 0.2); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.4); }
+
+    /* Footer */
+    footer {
+      padding: 48px 0;
+      background: #070a12;
+      border-top: 1px solid var(--border-color);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    @media (max-width: 1024px) {
+      .grid-4 { grid-template-columns: repeat(2, 1fr); }
+      .grid-3 { grid-template-columns: 1fr; }
+      .pipeline-stage { grid-template-columns: 1fr; gap: 8px; }
+    }
+
+    @media (max-width: 768px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .grid-4 { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+      .hero-title { font-size: 1.75rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <header class="top-nav">
+    <div class="container nav-inner">
+      <a href="#overview" class="brand">
+        <div class="brand-logo">&beta;</div>
+        <div>
+          <div class="brand-title">
+            WORKLENS
+            <span class="brand-tag">Benefit Engine</span>
+          </div>
+        </div>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#overview" class="active">Overview</a></li>
+        <li><a href="#logic">Generation Logic</a></li>
+        <li><a href="#templates">Templates</a></li>
+        <li><a href="#formatting">Workload Format</a></li>
+        <li><a href="#tools">Tools Mapping</a></li>
+        <li><a href="#special-cases">Special Cases</a></li>
+        <li><a href="#examples">Real Examples</a></li>
+        <li><a href="#playground">Playground</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <header class="hero">
+    <div class="container">
+      <div class="hero-pretitle">
+        <span class="badge badge-confirmed">CFM-02 &bull; 100.00% Exact Match</span>
+        Deterministic Linguistic Grammar Architecture
+      </div>
+      <h1 class="hero-title">Linguistic Reverse Engineering: Kolom Benefit REA</h1>
+      <p class="hero-desc">
+        Dekomposisi komprehensif mekanisme pembentukan narasi bisnis pada kolom <strong>Benefit</strong> (667 record benchmark REA).
+        Membuktikan secara empiris bahwa narasi dibentuk oleh <strong>sistem tata bahasa deterministik berbasis slot</strong>, 
+        bukan melalui AI generatif (LLM).
+      </p>
+
+      <div class="hero-meta-bar">
+        <div class="hero-meta-item">
+          <span>Target Dataset:</span>
+          <strong>Improvements_With_Benefit.csv (667 baris)</strong>
+        </div>
+        <div class="hero-meta-item">
+          <span>Tingkat Kecocokan:</span>
+          <span class="badge badge-confirmed">667 / 667 (100.00% Karakter Identik)</span>
+        </div>
+        <div class="hero-meta-item">
+          <span>Metode Sintesis:</span>
+          <strong>Rule-based Linguistic Slot Template</strong>
+        </div>
+        <div class="hero-meta-item">
+          <span>Status Investigasi:</span>
+          <span class="badge badge-confirmed">CONFIRMED (CFM-02)</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- 1. BENEFIT OVERVIEW -->
+    <section id="overview">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Bagian 1</span>
+          <h2 class="section-title">Benefit Overview & Batasan Realisasi Bisnis</h2>
+          <p class="section-subtitle">
+            Seluruh 667 narasi Benefit terbukti dapat direproduksi 100.00% secara deterministik. 
+            Namun terdapat perbedaan mendasar antara sintesis teks linguistik dan realisasi penghematan beban kerja di lapangan.
+          </p>
+        </div>
+
+        <!-- 4 KPI Cards -->
+        <div class="grid-4" style="margin-bottom: 28px;">
+          <div class="kpi-card kpi-emerald">
+            <div class="kpi-label">Total Record REA</div>
+            <div class="kpi-value">667</div>
+            <div class="kpi-subtext">Populasi lengkap benchmark CSV</div>
+          </div>
+          <div class="kpi-card kpi-emerald">
+            <div class="kpi-label">Reproduksi Tata Bahasa</div>
+            <div class="kpi-value">100%</div>
+            <div class="kpi-subtext">667 dari 667 baris cocok persis</div>
+          </div>
+          <div class="kpi-card kpi-blue">
+            <div class="kpi-label">Pola Template Status</div>
+            <div class="kpi-value">3</div>
+            <div class="kpi-subtext">Fully, Not Yet Triggered, & Partial</div>
+          </div>
+          <div class="kpi-card kpi-amber">
+            <div class="kpi-label">Pengecualian Khusus</div>
+            <div class="kpi-value">2</div>
+            <div class="kpi-subtext">Workload 0 & Preposisi Ganda</div>
+          </div>
+        </div>
+
+        <!-- Critical Business Difference Banner -->
+        <div class="card" style="border-left: 4px solid #6366f1; margin-bottom: 24px;">
+          <h3 class="card-title" style="margin-bottom: 10px;">
+            <span>&#9878;</span> Perbedaan Fundamental: Pola Teks vs Realisasi Penghematan Nyata
+          </h3>
+          <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 16px;">
+            Keberhasilan mereproduksi 100.00% teks narasi Benefit membuktikan <strong>integritas formula linguistik</strong>. 
+            Namun pemangku kepentingan (*stakeholders*) tidak boleh menyamakan kalimat narasi dengan <em>penghematan waktu aktual yang sudah terjadi</em> di lingkungan produksi:
+          </p>
+
+          <div class="grid-3">
+            <div style="background: rgba(16, 185, 129, 0.08); padding: 16px; border-radius: var(--radius-sm); border: 1px solid rgba(16, 185, 129, 0.2);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <strong style="color: #34d399;">Fully Automated (389 Baris)</strong>
+                <span class="badge badge-confirmed">Realisasi 100%</span>
+              </div>
+              <p style="font-size: 0.8rem; color: var(--text-secondary);">
+                Otomasi crontab/dashboard sudah aktif di produksi. Penghematan durasi operasional bersifat <strong>aktual dan riil</strong> setiap bulannya menggantikan jam kerja manual staf L1.
+              </p>
+            </div>
+
+            <div style="background: rgba(59, 130, 246, 0.08); padding: 16px; border-radius: var(--radius-sm); border: 1px solid rgba(59, 130, 246, 0.2);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <strong style="color: #60a5fa;">Not Yet Triggered (256 Baris)</strong>
+                <span class="badge badge-inferred">Realisasi Potensial</span>
+              </div>
+              <p style="font-size: 0.8rem; color: var(--text-secondary);">
+                Script/tool otomasi sudah selesai dibangun, namun eksekusinya bersifat <em>reaktif</em> (menunggu insiden terjadi) atau belum dikaitkan ke event webhook otomatis. Penghematan bersifat <strong>potensial</strong>.
+              </p>
+            </div>
+
+            <div style="background: rgba(245, 158, 11, 0.08); padding: 16px; border-radius: var(--radius-sm); border: 1px solid rgba(245, 158, 11, 0.2);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <strong style="color: #fbbf24;">Partial Automated (22 Baris)</strong>
+                <span class="badge badge-unresolved">Realisasi Sebagian</span>
+              </div>
+              <p style="font-size: 0.8rem; color: var(--text-secondary);">
+                Solusi otomatis telah membantu sebagian alur kerja tiket, tetapi eksekusi atau verifikasi akhir masih memerlukan inisiasi manual manusia (*human-in-the-loop*). Penghematan <strong>hanya tereduksi sebagian</strong>.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Donut & Stacked Distribution of Benefit Templates -->
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Proporsi Template Berdasarkan Status Triggered</h3>
+                <div class="card-subtitle">Distribusi 667 Narasi Benefit di Produksi</div>
+              </div>
+              <span class="badge badge-confirmed">389 vs 256 vs 22</span>
+            </div>
+            <div style="height: 240px; position: relative;">
+              <canvas id="templateDonutChart"></canvas>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Distribusi Format Workload dalam Teks</h3>
+                <div class="card-subtitle">Menit (&lt;60m) vs Jam Bulat vs Jam Pecahan</div>
+              </div>
+              <span class="badge badge-confirmed">RULE-BEN-01</span>
+            </div>
+            <div style="height: 240px; position: relative;">
+              <canvas id="workloadFormatChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. BENEFIT GENERATION LOGIC -->
+    <section id="logic">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Bagian 2</span>
+          <h2 class="section-title">Benefit Generation Logic: Alur Sintesis Deterministik</h2>
+          <p class="section-subtitle">
+            Visualisasi terstruktur bagaimana setiap slot kalimat Benefit dirakit secara berjenjang dari 6 atribut operasional.
+          </p>
+        </div>
+
+        <!-- Visual Step-by-Step Grammar Pipeline -->
+        <div class="grammar-pipeline">
+          <div class="pipeline-stage">
+            <div class="pipeline-stage-label">
+              <span class="slot slot-workload">1. Input Angka</span>
+            </div>
+            <div class="pipeline-stage-content">
+              Mengambil atribut <code class="mono">Durasi (Menit)</code> dan <code class="mono">Event Per Month</code>, kemudian menghitung beban waktu bulanan:
+              <strong style="color: #fff; margin-left: 6px;"><code class="mono">Workload = Durasi &times; Event</code></strong>.
+            </div>
+          </div>
+
+          <div class="pipeline-stage">
+            <div class="pipeline-stage-label">
+              <span class="slot slot-workload">2. Format Waktu</span>
+            </div>
+            <div class="pipeline-stage-content">
+              <strong>RULE-BEN-01:</strong> Jika <code class="mono">Workload &lt; 60</code> &rarr; <code class="mono">"{W} minutes"</code>.<br>
+              Jika <code class="mono">Workload &ge; 60</code> &rarr; konversi jam <code class="mono">H = W / 60.0</code>. Jika bulat gunakan <code class="mono">int(H) + " hours"</code>, jika pecahan gunakan <code class="mono">format(H, ".1f") + " hours"</code>.
+            </div>
+          </div>
+
+          <div class="pipeline-stage">
+            <div class="pipeline-stage-label">
+              <span class="slot slot-duration">3. Klausul Event</span>
+            </div>
+            <div class="pipeline-stage-content">
+              <strong>RULE-BEN-02:</strong> Jika <code class="mono">Event == 1</code> &rarr; <code class="mono">"(saving {Durasi} minutes per event)"</code>.<br>
+              Jika <code class="mono">Event &gt; 1</code> &rarr; <code class="mono">"(saving {Durasi} minutes per event across {Event} monthly events)"</code>.
+            </div>
+          </div>
+
+          <div class="pipeline-stage">
+            <div class="pipeline-stage-label">
+              <span class="slot slot-tool">4. Preposisi Tool</span>
+            </div>
+            <div class="pipeline-stage-content">
+              <strong>RULE-BEN-03:</strong> Standar &rarr; <code class="mono">"via {Tools Automation}"</code>.<br>
+              Pengecualian: <code class="mono">CICD</code> &rarr; <code class="mono">"via CI/CD automation"</code>; <code class="mono">Not Automate</code> &rarr; <code class="mono">"through standardized automation"</code>.
+            </div>
+          </div>
+
+          <div class="pipeline-stage">
+            <div class="pipeline-stage-label">
+              <span class="slot slot-action">5. Frasa Aksi Baku</span>
+            </div>
+            <div class="pipeline-stage-content">
+              Memetakan <code class="mono">Category Action</code> ke salah satu dari 6 frasa semantik kanonikal (contoh: Smart Healing &rarr; <code class="mono">"automated fault detection and self-healing recovery"</code>).
+            </div>
+          </div>
+
+          <div class="pipeline-stage">
+            <div class="pipeline-stage-label">
+              <span class="slot slot-verb">6. Penggabungan Slot</span>
+            </div>
+            <div class="pipeline-stage-content">
+              <strong>RULE-BEN-04:</strong> Menggabungkan seluruh komponen ke dalam template eksekutif sesuai <code class="mono">Status Triggered</code>:
+              <code class="mono">{Prefix Verb} + {Workload Str} + {Scope Clause} + {Duration Clause} + {Tool Clause} + through + {Action Phrase} + "."</code>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. TEMPLATE BREAKDOWN -->
+    <section id="templates">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Bagian 3</span>
+          <h2 class="section-title">Template Breakdown Berdasarkan Status Triggered</h2>
+          <p class="section-subtitle">
+            Struktur sintaks spesifik dan kata kerja pemicu (*action verbs*) yang membedakan ketiga status kesiapan otomasi.
+          </p>
+        </div>
+
+        <div class="grid-3">
+          <!-- Template 1: Fully Automated -->
+          <div class="card" style="border-top: 4px solid #10b981;">
+            <div class="card-header">
+              <span class="badge badge-confirmed">Template 1</span>
+              <span style="font-size: 0.8rem; color: #34d399; font-weight: 700;">389 Record (58,3%)</span>
+            </div>
+            <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 6px;">Fully Automated</h3>
+            <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 14px;">
+              Kata kerja pembuka: <strong style="color: #34d399;">Eliminates</strong>. Menunjukkan penghematan waktu operasional yang pasti terjadi setiap bulan secara otonom.
+            </p>
+
+            <div class="template-builder">
+              <span class="slot slot-verb">Eliminates</span>
+              <span class="slot slot-workload">{workload_str}</span>
+              <span style="color: #cbd5e1;">of manual operational workload per month</span>
+              <span class="slot slot-duration">{duration_clause}</span>
+              <span class="slot slot-tool">{tool_clause}</span>
+              <span style="color: #cbd5e1;">through</span>
+              <span class="slot slot-action">{action_phrase}.</span>
+            </div>
+          </div>
+
+          <!-- Template 2: Not Yet Triggered -->
+          <div class="card" style="border-top: 4px solid #3b82f6;">
+            <div class="card-header">
+              <span class="badge badge-inferred">Template 2</span>
+              <span style="font-size: 0.8rem; color: #60a5fa; font-weight: 700;">256 Record (38,4%)</span>
+            </div>
+            <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 6px;">Not Yet Triggered Automated</h3>
+            <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 14px;">
+              Kata kerja pembuka: <strong style="color: #60a5fa;">Potentially eliminates</strong> disertai klausul syarat <code class="mono">once automated</code>.
+            </p>
+
+            <div class="template-builder">
+              <span class="slot slot-verb">Potentially eliminates</span>
+              <span class="slot slot-workload">{workload_str}</span>
+              <span style="color: #cbd5e1;">of manual operational workload per month</span>
+              <span class="slot slot-duration">{duration_clause}</span>
+              <span class="slot slot-verb" style="background: rgba(59, 130, 246, 0.3);">once automated</span>
+              <span class="slot slot-tool">{tool_clause}</span>
+              <span style="color: #cbd5e1;">through</span>
+              <span class="slot slot-action">{action_phrase}.</span>
+            </div>
+          </div>
+
+          <!-- Template 3: Partial Automated -->
+          <div class="card" style="border-top: 4px solid #f59e0b;">
+            <div class="card-header">
+              <span class="badge badge-unresolved">Template 3</span>
+              <span style="font-size: 0.8rem; color: #fbbf24; font-weight: 700;">22 Record (3,3%)</span>
+            </div>
+            <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 6px;">Partial Automated</h3>
+            <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 14px;">
+              Kata kerja pembuka: <strong style="color: #fbbf24;">Reduces</strong>. Eksklusif untuk aktivitas permohonan semi-otomatis yang masih memerlukan verifikasi operator.
+            </p>
+
+            <div class="template-builder">
+              <span class="slot slot-verb">Reduces monthly operational workload by</span>
+              <span class="slot slot-workload">{workload_str}</span>
+              <span class="slot slot-duration">{duration_clause}</span>
+              <span class="slot slot-tool">{tool_clause}</span>
+              <span style="color: #cbd5e1;">through</span>
+              <span class="slot slot-action">{action_phrase}.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. WORKLOAD FORMATTING -->
+    <section id="formatting">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Bagian 4</span>
+          <h2 class="section-title">Workload Formatting & Penskalaan Satuan</h2>
+          <p class="section-subtitle">
+            Aturan deterministik penskalaan satuan menit ke jam dan ketentuan pembulatan satu desimal (RULE-BEN-01).
+          </p>
+        </div>
+
+        <div class="grid-2">
+          <!-- Formatting Rules Table -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Spesifikasi Format Angka Beban Kerja</h3>
+              <span class="badge badge-confirmed">RULE-BEN-01</span>
+            </div>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Kondisi Beban Kerja</th>
+                    <th>Format Output</th>
+                    <th>Contoh Nilai</th>
+                    <th>Jumlah Data</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Workload &lt; 60 menit</strong></td>
+                    <td><code class="mono">{W} minutes</code></td>
+                    <td><code class="mono">10 &times; 1 = 10 minutes</code><br><code class="mono">5 &times; 10 = 50 minutes</code></td>
+                    <td><strong style="color: #34d399;">592 baris</strong> (88,76%)</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Workload &ge; 60 (Jam Bulat)</strong></td>
+                    <td><code class="mono">{int(H)} hours</code></td>
+                    <td><code class="mono">15 &times; 4 = 1 hours</code><br><code class="mono">20 &times; 30 = 10 hours</code></td>
+                    <td><strong style="color: #60a5fa;">24 baris</strong> (3,60%)</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Workload &ge; 60 (Jam Pecahan)</strong></td>
+                    <td><code class="mono">{H:.1f} hours</code></td>
+                    <td><code class="mono">15 &times; 11 = 2.8 hours</code><br><code class="mono">15 &times; 30 = 7.5 hours</code></td>
+                    <td><strong style="color: #fbbf24;">49 baris</strong> (7,35%)</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Workload = 0 (Beban Nol)</strong></td>
+                    <td><em>(Non-Minute Text)</em></td>
+                    <td><code class="mono">0 &times; 1 = 0</code> (lihat kasus khusus)</td>
+                    <td><strong style="color: #f87171;">2 baris</strong> (0,30%)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Event Duration Clause Rules -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Klausul Durasi & Pengulangan Event Bulanan</h3>
+              <span class="badge badge-confirmed">RULE-BEN-02</span>
+            </div>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Frekuensi Bulanan</th>
+                    <th>Format Klausul Penghematan</th>
+                    <th>Contoh Sintaks</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Event = 1 (Tunggal)</strong></td>
+                    <td><code class="mono">(saving {D} minutes per event)</code></td>
+                    <td><code class="mono">(saving 5 minutes per event)</code></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Event &gt; 1 (Berulang)</strong></td>
+                    <td><code class="mono">(saving {D} minutes per event across {E} monthly events)</code></td>
+                    <td><code class="mono">(saving 20 minutes per event across 30 monthly events)</code></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="callout callout-info" style="margin-top: 16px;">
+              <div class="callout-icon">&#9432;</div>
+              <div style="font-size: 0.84rem;">
+                <strong>Konsistensi Integer:</strong> Pada klausul <code class="mono">saving {D} minutes</code>, angka durasi selalu disajikan dalam satuan menit bulat tanpa konversi ke jam, menjaga pembaca memahami durasi asli dari SOP sebelum dikalikan frekuensi bulanan.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. TOOLS DESCRIPTION MAPPING -->
+    <section id="tools">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Bagian 5</span>
+          <h2 class="section-title">Tools Description Mapping & Preposisi Linguistik</h2>
+          <p class="section-subtitle">
+            Standardisasi 8 perkakas otomatisasi pada dataset REA dan mekanisme penentuan preposisi "via" vs "through" (RULE-BEN-03).
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Tools Automation (CSV)</th>
+                  <th>Jumlah Baris</th>
+                  <th>Frasa Perkakas yang Dihasilkan</th>
+                  <th>Preposisi</th>
+                  <th>Keterangan Bisnis</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="background: rgba(99, 102, 241, 0.08);">
+                  <td><strong style="color: #a5b4fc;"><code class="mono">AION</code></strong></td>
+                  <td>323</td>
+                  <td><code class="mono">via AION</code></td>
+                  <td><span class="badge badge-confirmed">via</span></td>
+                  <td>Platform orkestrasi otomasi telco utama Telkomsel.</td>
+                </tr>
+                <tr>
+                  <td><strong style="color: #fff;"><code class="mono">Shell Script</code></strong></td>
+                  <td>244</td>
+                  <td><code class="mono">via Shell Script</code></td>
+                  <td><span class="badge badge-confirmed">via</span></td>
+                  <td>Skrip bash/shell mandiri di server operasi L1.</td>
+                </tr>
+                <tr>
+                  <td><strong style="color: #fff;"><code class="mono">Grafana</code></strong></td>
+                  <td>65</td>
+                  <td><code class="mono">via Grafana</code></td>
+                  <td><span class="badge badge-confirmed">via</span></td>
+                  <td>Dashboard observabilitas & visualisasi metrik real-time.</td>
+                </tr>
+                <tr>
+                  <td><code class="mono">BMC</code></td>
+                  <td>18</td>
+                  <td><code class="mono">via BMC</code></td>
+                  <td><span class="badge badge-confirmed">via</span></td>
+                  <td>Remedy ITSM & monitoring server legasi BMC.</td>
+                </tr>
+                <tr>
+                  <td><code class="mono">DSC</code></td>
+                  <td>8</td>
+                  <td><code class="mono">via DSC</code></td>
+                  <td><span class="badge badge-confirmed">via</span></td>
+                  <td>Desired State Configuration automation engine.</td>
+                </tr>
+                <tr style="background: rgba(245, 158, 11, 0.08);">
+                  <td><strong style="color: #fbbf24;"><code class="mono">CICD</code></strong></td>
+                  <td>5</td>
+                  <td><code class="mono">via CI/CD automation</code></td>
+                  <td><span class="badge badge-confirmed">via</span></td>
+                  <td><strong>Pemetaan Khusus:</strong> Mengembangkan singkatan menjadi frasa lengkap.</td>
+                </tr>
+                <tr style="background: rgba(239, 68, 68, 0.08);">
+                  <td><strong style="color: #f87171;"><code class="mono">Not Automate</code></strong></td>
+                  <td>2</td>
+                  <td><code class="mono">through standardized automation</code></td>
+                  <td><span class="badge badge-unresolved">through</span></td>
+                  <td><strong>Pengecualian Preposisi:</strong> Menggunakan preposisi <em>through</em> alih-alih <em>via</em>.</td>
+                </tr>
+                <tr>
+                  <td><code class="mono">AO</code></td>
+                  <td>2</td>
+                  <td><code class="mono">via AO</code></td>
+                  <td><span class="badge badge-confirmed">via</span></td>
+                  <td>Automation Orchestrator pada arsitektur Pacelayer Uniprov.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. SPECIAL CASES -->
+    <section id="special-cases">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Bagian 6</span>
+          <h2 class="section-title">Katalog Kasus Khusus (Special Cases & Exceptions)</h2>
+          <p class="section-subtitle">
+            Dua anomali struktural terisolasi yang ditemukan pada rekonsiliasi dataset REA: Workload = 0 dan Anomali Preposisi Ganda.
+          </p>
+        </div>
+
+        <div class="grid-2">
+          <!-- Special Case 1: Workload = 0 -->
+          <div class="card" style="border-left: 4px solid #f87171;">
+            <div class="card-header">
+              <span class="badge badge-confirmed">RULE-BEN-05 &bull; EXC-04</span>
+              <span style="font-size: 0.8rem; color: #f87171; font-weight: 700;">2 Kasus Terisolasi</span>
+            </div>
+            <h3 class="card-title">Kasus Khusus 1: Workload Bernilai Nol (Workload = 0)</h3>
+            <p style="font-size: 0.84rem; color: var(--text-secondary); margin-bottom: 14px;">
+              Jika aktivitas memiliki durasi 0 menit di dataset mentah, formula waktu reguler tidak dapat mencetak <em>"0 minutes"</em>. 
+              Sistem tata bahasa beralih ke template kualitatif khusus percepatan pemulihan:
+            </p>
+
+            <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: var(--radius-sm); margin-bottom: 14px; font-size: 0.8rem;">
+              <strong style="color: #cbd5e1; display: block; margin-bottom: 4px;">Template Baku Workload 0:</strong>
+              <code class="mono" style="color: #fca5a5;">
+                "{Prefix} manual intervention time and accelerates system recovery {once_automated} {tool_clause} through {action_phrase}."
+              </code>
+            </div>
+
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Row</th>
+                    <th>Activity ID</th>
+                    <th>Tool</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>308</td>
+                    <td><code class="mono">VENA - Restart Service RabbitMQ Connection Close</code></td>
+                    <td>Not Automate</td>
+                    <td>Not Yet Triggered</td>
+                  </tr>
+                  <tr>
+                    <td>309</td>
+                    <td><code class="mono">VENA - Restart Container RabbitMQ</code></td>
+                    <td>AION</td>
+                    <td>Not Yet Triggered</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Special Case 2: Double Preposition -->
+          <div class="card" style="border-left: 4px solid #f59e0b;">
+            <div class="card-header">
+              <span class="badge badge-unresolved">EXC-05</span>
+              <span style="font-size: 0.8rem; color: #fbbf24; font-weight: 700;">2 Kasus Terisolasi</span>
+            </div>
+            <h3 class="card-title">Kasus Khusus 2: Pengecualian Preposisi Ganda ("through ... through")</h3>
+            <p style="font-size: 0.84rem; color: var(--text-secondary); margin-bottom: 14px;">
+              Ketika <code class="mono">Tools Automation == 'Not Automate'</code>, frasa perkakas menghasilkan <code class="mono">"through standardized automation"</code>. 
+              Saat disambungkan dengan klausul aksi baku yang juga diawali kata <code class="mono">"through"</code>, tercipta repetisi preposisi ganda:
+            </p>
+
+            <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: var(--radius-sm); margin-bottom: 14px; font-size: 0.8rem;">
+              <strong style="color: #cbd5e1; display: block; margin-bottom: 4px;">Pola Terbentuk di Benchmark:</strong>
+              <code class="mono" style="color: #fde68a;">
+                ... <strong style="text-decoration: underline;">through</strong> standardized automation <strong style="text-decoration: underline;">through</strong> {action_phrase}.
+              </code>
+            </div>
+
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Row</th>
+                    <th>Activity ID</th>
+                    <th>Workload</th>
+                    <th>Tools</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>308</td>
+                    <td><code class="mono">VENA - Restart Service RabbitMQ...</code></td>
+                    <td>0 menit</td>
+                    <td>Not Automate</td>
+                  </tr>
+                  <tr>
+                    <td>645</td>
+                    <td><code class="mono">SIAD - Checking Employee Status</code></td>
+                    <td>5 menit</td>
+                    <td>Not Automate</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. REAL EXAMPLES DIRECTLY FROM REA -->
+    <section id="examples">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Bagian 7</span>
+          <h2 class="section-title">Contoh Kasus Riil dari Dataset REA</h2>
+          <p class="section-subtitle">
+            Seluruh contoh diambil langsung dari berkas <code class="mono">Improvements_With_Benefit.csv</code> untuk menunjukkan 
+            korespondensi 1-ke-1 antara atribut masukan dan kalimat Benefit yang dihasilkan.
+          </p>
+        </div>
+
+        <!-- Real Example 1 -->
+        <div class="example-card ex-fully">
+          <div class="example-header">
+            <div>
+              <span class="badge badge-confirmed">Contoh Riil 1 &bull; Jam Bulat (Integer Hours)</span>
+              <div class="example-title">New USSDGW - Monitoring Success Rate via Grafana Mobile</div>
+            </div>
+            <span style="font-size: 0.78rem; color: #94a3b8;">Row 17 REA CSV</span>
+          </div>
+
+          <div class="example-grid">
+            <div class="example-grid-item">
+              <span>Status Triggered</span>
+              <strong style="color: #34d399;">Fully Automated</strong>
+            </div>
+            <div class="example-grid-item">
+              <span>Category Action</span>
+              <strong>Auto Monitoring</strong>
+            </div>
+            <div class="example-grid-item">
+              <span>Tools Automation</span>
+              <strong>Grafana</strong>
+            </div>
+            <div class="example-grid-item">
+              <span>Durasi &times; Event</span>
+              <strong>20 min &times; 30 events</strong>
+            </div>
+            <div class="example-grid-item">
+              <span>Workload Terhitung</span>
+              <strong style="color: #fbbf24;">600 min (10 hours)</strong>
+            </div>
+          </div>
+
+          <div class="example-benefit-box">
+            <span class="benefit-highlight-verb">Eliminates</span> 
+            <span class="benefit-highlight-time">10 hours</span> of manual operational workload per month 
+            <span class="benefit-highlight-clause">(saving 20 minutes per event across 30 monthly events)</span> 
+            <span class="benefit-highlight-tool">via Grafana</span> through 
+            <span class="benefit-highlight-action">continuous proactive monitoring and real-time anomaly detection.</span>
+          </div>
+        </div>
+
+        <!-- Real Example 2 -->
+        <div class="example-card ex-fully">
+          <div class="example-header">
+            <div>
+              <span class="badge badge-confirmed">Contoh Riil 2 &bull; Jam Pecahan Desimal</span>
+              <div class="example-title">Subsdomain - Error Transaction via Grafana</div>
+            </div>
+            <span style="font-size: 0.78rem; color: #94a3b8;">Row 45 REA CSV</span>
+          </div>
+
+          <div class="example-grid">
+            <div class="example-grid-item">
+              <span>Status Triggered</span>
+              <strong style="color: #34d399;">Fully Automated</strong>
+            </div>
+            <div class="example-grid-item">
+              <span>Category Action</span>
+              <strong>Auto Monitoring</strong>
+            </div>
+            <div class="example-grid-item">
+              <span>Tools Automation</span>
+              <strong>Grafana</strong>
+            </div>
+            <div class="example-grid-item">
+              <span>Durasi &times; Event</span>
+              <strong>15 min &times; 30 events</strong>
+            </div>
+            <div class="example-grid-item">
+              <span>Workload Terhitung</span>
+              <strong style="color: #fbbf24;">450 min (7.5 hours)</strong>
+            </div>
+          </div>
+
+          <div class="example-benefit-box">
+            <span class="benefit-highlight-verb">Eliminates</span> 
+            <span class="benefit-highlight-time">7.5 hours</span> of manual operational workload per month 
+            <span class="benefit-highlight-clause">(saving 15 minutes per event across 30 monthly events)</span> 
+            <span class="benefit-highlight-tool">via Grafana</span> through 
+            <span class="benefit-highlight-action">continuous proactive monitoring and real-time anomaly detection.</span>
+          </div>
+        </div>
+
+        <!-- Real Example 3 -->
+        <div class="example-card ex-notyet">
+          <div class="example-header">
+            <div>
+              <span class="badge badge-inferred">Contoh Riil 3 &bull; Menit (&lt; 60m) Multi-Event</span>
+              <div class="example-title">Dunia Games - Collect Livestream Report Data</div>
+            </div>
+            <span style="font-size: 0.78rem; color: #94a3b8;">Row 214 REA CSV</span>
+          </div>
+
+          <div class="example-grid">
+            <div class="example-grid-item">
+              <span>Status Triggered</span>
+              <strong style="color: #60a5fa;">Not Yet Triggered Automated</strong>
+            </div>
+            <div class="example-grid-item">
+              <span>Category Action</span>
+              <strong>Self Service Request</strong>
+            </div>
+            <div class="example-grid-item">
+              <span>Tools Automation</span>
+              <strong>AION</strong>
+            </div>
+            <div class="example-grid-item">
+              <span>Durasi &times; Event</span>
+              <strong>5 min &times; 10 events</strong>
+            </div>
+            <div class="example-grid-item">
+              <span>Workload Terhitung</span>
+              <strong style="color: #fbbf24;">50 minutes</strong>
+            </div>
+          </div>
+
+          <div class="example-benefit-box">
+            <span class="benefit-highlight-verb">Potentially eliminates</span> 
+            <span class="benefit-highlight-time">50 minutes</span> of manual operational workload per month 
+            <span class="benefit-highlight-clause">(saving 5 minutes per event across 10 monthly events)</span> 
+            once automated <span class="benefit-highlight-tool">via AION</span> through 
+            <span class="benefit-highlight-action">streamlined self-service execution and eliminating manual ticket handling.</span>
+          </div>
+        </div>
+
+        <!-- Real Example 4 -->
+        <div class="example-card ex-partial">
+          <div class="example-header">
+            <div>
+              <span class="badge badge-unresolved">Contoh Riil 4 &bull; Partial Automated (1 Desimal)</span>
+              <div class="example-title">Digital Core ESB - ESB Quota Masking</div>
+            </div>
+            <span style="font-size: 0.78rem; color: #94a3b8;">Row 539 REA CSV</span>
+          </div>
+
+          <div class="example-grid">
+            <div class="example-grid-item">
+              <span>Status Triggered</span>
+              <strong style="color: #fbbf24;">Partial Automated</strong>
+            </div>
+            <div class="example-grid-item">
+              <span>Category Action</span>
+              <strong>Self Service Request</strong>
+            </div>
+            <div class="example-grid-item">
+              <span>Tools Automation</span>
+              <strong>AION</strong>
+            </div>
+            <div class="example-grid-item">
+              <span>Durasi &times; Event</span>
+              <strong>15 min &times; 11 events</strong>
+            </div>
+            <div class="example-grid-item">
+              <span>Workload Terhitung</span>
+              <strong style="color: #fbbf24;">165 min (2.8 hours)</strong>
+            </div>
+          </div>
+
+          <div class="example-benefit-box">
+            <span class="benefit-highlight-verb">Reduces monthly operational workload by</span> 
+            <span class="benefit-highlight-time">2.8 hours</span> 
+            <span class="benefit-highlight-clause">(saving 15 minutes per event across 11 monthly events)</span> 
+            <span class="benefit-highlight-tool">via AION</span> through 
+            <span class="benefit-highlight-action">streamlined self-service execution and eliminating manual ticket handling.</span>
+          </div>
+        </div>
+
+        <!-- Real Example 5 -->
+        <div class="example-card ex-notyet">
+          <div class="example-header">
+            <div>
+              <span class="badge badge-inferred">Contoh Riil 5 &bull; Pemetaan Tool CICD Khusus</span>
+              <div class="example-title">NOIS - Restart services NOIS</div>
+            </div>
+            <span style="font-size: 0.78rem; color: #94a3b8;">Row 382 REA CSV</span>
+          </div>
+
+          <div class="example-grid">
+            <div class="example-grid-item">
+              <span>Status Triggered</span>
+              <strong style="color: #60a5fa;">Not Yet Triggered Automated</strong>
+            </div>
+            <div class="example-grid-item">
+              <span>Category Action</span>
+              <strong>Smart Healing</strong>
+            </div>
+            <div class="example-grid-item">
+              <span>Tools Automation</span>
+              <strong>CICD</strong>
+            </div>
+            <div class="example-grid-item">
+              <span>Durasi &times; Event</span>
+              <strong>10 min &times; 1 event</strong>
+            </div>
+            <div class="example-grid-item">
+              <span>Workload Terhitung</span>
+              <strong style="color: #fbbf24;">10 minutes</strong>
+            </div>
+          </div>
+
+          <div class="example-benefit-box">
+            <span class="benefit-highlight-verb">Potentially eliminates</span> 
+            <span class="benefit-highlight-time">10 minutes</span> of manual operational workload per month 
+            <span class="benefit-highlight-clause">(saving 10 minutes per event)</span> 
+            once automated <span class="benefit-highlight-tool">via CI/CD automation</span> through 
+            <span class="benefit-highlight-action">automated fault detection and self-healing recovery.</span>
+          </div>
+        </div>
+
+        <!-- Real Example 6 -->
+        <div class="example-card ex-special">
+          <div class="example-header">
+            <div>
+              <span class="badge badge-confirmed">Contoh Riil 6 &bull; Anomali Workload 0 & Preposisi Ganda</span>
+              <div class="example-title">VENA - Restart Service RabbitMQ Connection Close</div>
+            </div>
+            <span style="font-size: 0.78rem; color: #94a3b8;">Row 308 REA CSV</span>
+          </div>
+
+          <div class="example-grid">
+            <div class="example-grid-item">
+              <span>Status Triggered</span>
+              <strong style="color: #60a5fa;">Not Yet Triggered Automated</strong>
+            </div>
+            <div class="example-grid-item">
+              <span>Category Action</span>
+              <strong>Smart Healing</strong>
+            </div>
+            <div class="example-grid-item">
+              <span>Tools Automation</span>
+              <strong style="color: #f87171;">Not Automate</strong>
+            </div>
+            <div class="example-grid-item">
+              <span>Durasi &times; Event</span>
+              <strong>0 min &times; 1 event</strong>
+            </div>
+            <div class="example-grid-item">
+              <span>Workload Terhitung</span>
+              <strong style="color: #f87171;">0 minutes</strong>
+            </div>
+          </div>
+
+          <div class="example-benefit-box">
+            <span class="benefit-highlight-verb">Potentially eliminates</span> manual intervention time and accelerates system recovery 
+            once automated <span class="benefit-highlight-tool">through standardized automation</span> through 
+            <span class="benefit-highlight-action">automated fault detection and self-healing recovery.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. INTERACTIVE PLAYGROUND -->
+    <section id="playground">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Bagian 8</span>
+          <h2 class="section-title">Interactive Benefit Grammar Playground</h2>
+          <p class="section-subtitle">
+            Uji coba langsung formula Benefit deterministik. Pilih parameter operasional dan amati rekonstruksi 
+            kalimat Benefit secara instan sesuai tata bahasa benchmark REA.
+          </p>
+        </div>
+
+        <div class="playground-box">
+          <div class="pg-controls">
+            <div class="pg-field">
+              <label>Status Triggered</label>
+              <select id="pgStatus" onchange="runPlayground()">
+                <option value="Fully Automated">Fully Automated</option>
+                <option value="Not Yet Triggered Automated" selected>Not Yet Triggered Automated</option>
+                <option value="Partial Automated">Partial Automated</option>
+              </select>
+            </div>
+
+            <div class="pg-field">
+              <label>Category Action</label>
+              <select id="pgAction" onchange="runPlayground()">
+                <option value="Smart Healing" selected>Smart Healing</option>
+                <option value="Auto Monitoring">Auto Monitoring</option>
+                <option value="Self Service Request">Self Service Request</option>
+                <option value="Auto Housekeeping">Auto Housekeeping</option>
+                <option value="Health Check">Health Check</option>
+                <option value="Auto Restart">Auto Restart</option>
+              </select>
+            </div>
+
+            <div class="pg-field">
+              <label>Tools Automation</label>
+              <select id="pgTool" onchange="runPlayground()">
+                <option value="AION" selected>AION</option>
+                <option value="Shell Script">Shell Script</option>
+                <option value="Grafana">Grafana</option>
+                <option value="BMC">BMC</option>
+                <option value="DSC">DSC</option>
+                <option value="AO">AO</option>
+                <option value="CICD">CICD</option>
+                <option value="Not Automate">Not Automate</option>
+              </select>
+            </div>
+
+            <div class="pg-field">
+              <label>Durasi (Menit)</label>
+              <input type="number" id="pgDuration" value="20" min="0" oninput="runPlayground()">
+            </div>
+
+            <div class="pg-field">
+              <label>Event Per Month</label>
+              <input type="number" id="pgEvent" value="30" min="0" oninput="runPlayground()">
+            </div>
+          </div>
+
+          <div class="pg-output-box">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+              <span style="font-size: 0.8rem; font-weight: 700; color: #34d399; text-transform: uppercase;">Hasil Rekonstruksi Sintaks Linguistik:</span>
+              <span id="pgWorkloadBadge" class="badge badge-confirmed">Workload: 600 min (10 hours)</span>
+            </div>
+            <div id="pgOutputText" style="font-size: 1.05rem; font-weight: 600; color: #f8fafc; line-height: 1.6; background: rgba(255,255,255,0.03); padding: 16px; border-radius: var(--radius-sm); border-left: 4px solid #10b981;">
+              Generating text...
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container footer-inner">
+      <div>
+        <div style="font-weight: 700; color: #cbd5e1; margin-bottom: 4px;">WORKLENS Workload Intelligence Platform</div>
+        <div>Dokumen Forensik: <code class="mono" style="color: #94a3b8;">docs/enrichment/discovery/REA_REVERSE_ENGINEERING.md</code></div>
+      </div>
+      <div style="text-align: right;">
+        <div class="badge badge-confirmed">Benefit Grammar 100% Validated</div>
+        <div style="margin-top: 4px; font-size: 0.78rem;">Halaman Standalone: <code class="mono" style="color: #34d399;">benefit.html</code></div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Vanilla JavaScript Logic & Charts -->
+  <script>
+    // --- CHART.JS CONFIGURATION ---
+    Chart.defaults.color = '#94a3b8';
+    Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+
+    // 1. Template Donut Chart
+    const ctxTemplate = document.getElementById('templateDonutChart').getContext('2d');
+    new Chart(ctxTemplate, {
+      type: 'doughnut',
+      data: {
+        labels: [
+          'Fully Automated (Eliminates)',
+          'Not Yet Triggered (Potentially eliminates)',
+          'Partial Automated (Reduces)'
+        ],
+        datasets: [{
+          data: [389, 256, 22],
+          backgroundColor: ['#10b981', '#3b82f6', '#f59e0b'],
+          borderWidth: 2,
+          borderColor: '#111827'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { boxWidth: 12, padding: 14 }
+          },
+          tooltip: {
+            callbacks: {
+              label: function(ctx) {
+                const total = 667;
+                const pct = ((ctx.raw / total) * 100).toFixed(1);
+                return ` ${ctx.label}: ${ctx.raw} record (${pct}%)`;
+              }
+            }
+          }
+        },
+        cutout: '68%'
+      }
+    });
+
+    // 2. Workload Format Distribution
+    const ctxWorkload = document.getElementById('workloadFormatChart').getContext('2d');
+    new Chart(ctxWorkload, {
+      type: 'bar',
+      data: {
+        labels: [
+          'Menit (<60m)',
+          'Jam Pecahan (Desimal)',
+          'Jam Bulat (Integer)',
+          'Workload 0 (Khusus)'
+        ],
+        datasets: [{
+          label: 'Jumlah Baris',
+          data: [592, 49, 24, 2],
+          backgroundColor: ['#10b981', '#f59e0b', '#3b82f6', '#ef4444'],
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(ctx) {
+                const total = 667;
+                const pct = ((ctx.raw / total) * 100).toFixed(2);
+                return ` ${ctx.label}: ${ctx.raw} baris (${pct}%)`;
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            grid: { color: 'rgba(255,255,255,0.05)' }
+          },
+          x: {
+            grid: { display: false }
+          }
+        }
+      }
+    });
+
+    // --- BENEFIT GRAMMAR ENGINE LOGIC ---
+    const ACTION_PHRASES = {
+      'Smart Healing': 'automated fault detection and self-healing recovery',
+      'Auto Monitoring': 'continuous proactive monitoring and real-time anomaly detection',
+      'Self Service Request': 'streamlined self-service execution and eliminating manual ticket handling',
+      'Auto Housekeeping': 'scheduled automated log and disk housekeeping',
+      'Health Check': 'automated system health checks and proactive issue prevention',
+      'Auto Restart': 'automated service restarts and rapid downtime mitigation'
+    };
+
+    function runPlayground() {
+      const status = document.getElementById('pgStatus').value;
+      const action = document.getElementById('pgAction').value;
+      const tool = document.getElementById('pgTool').value;
+      const dur = parseFloat(document.getElementById('pgDuration').value) || 0;
+      const event = parseFloat(document.getElementById('pgEvent').value) || 0;
+
+      const workload = dur * event;
+      const actionPhrase = ACTION_PHRASES[action] || 'standard operational workflow';
+
+      // Tool Preposition Mapping (RULE-BEN-03)
+      let toolClause = `via ${tool}`;
+      if (tool === 'CICD') {
+        toolClause = 'via CI/CD automation';
+      } else if (tool === 'Not Automate') {
+        toolClause = 'through standardized automation';
+      }
+
+      // Workload 0 Exception (RULE-BEN-05)
+      if (workload === 0) {
+        document.getElementById('pgWorkloadBadge').innerText = 'Workload: 0 menit (RULE-BEN-05)';
+        let prefix = (status === 'Not Yet Triggered Automated') ? 'Potentially eliminates' : 'Eliminates';
+        let onceAuto = (status === 'Not Yet Triggered Automated') ? 'once automated ' : '';
+        let sentence = `${prefix} manual intervention time and accelerates system recovery ${onceAuto}${toolClause} through ${actionPhrase}.`.replace(/\s+/g, ' ');
+        document.getElementById('pgOutputText').innerText = sentence;
+        return;
+      }
+
+      // Workload Formatting (RULE-BEN-01)
+      let workloadStr = '';
+      if (workload < 60) {
+        workloadStr = `${workload} minutes`;
+      } else {
+        const hours = workload / 60.0;
+        if (Number.isInteger(hours)) {
+          workloadStr = `${hours} hours`;
+        } else {
+          workloadStr = `${hours.toFixed(1)} hours`;
+        }
+      }
+
+      document.getElementById('pgWorkloadBadge').innerText = `Workload: ${workload} menit (${workloadStr})`;
+
+      // Duration & Frequency Clause (RULE-BEN-02)
+      let durClause = '';
+      if (event === 1) {
+        durClause = `(saving ${dur} minutes per event)`;
+      } else {
+        durClause = `(saving ${dur} minutes per event across ${event} monthly events)`;
+      }
+
+      // Template Formulation (RULE-BEN-04)
+      let sentence = '';
+      if (status === 'Fully Automated') {
+        sentence = `Eliminates ${workloadStr} of manual operational workload per month ${durClause} ${toolClause} through ${actionPhrase}.`;
+      } else if (status === 'Not Yet Triggered Automated') {
+        sentence = `Potentially eliminates ${workloadStr} of manual operational workload per month ${durClause} once automated ${toolClause} through ${actionPhrase}.`;
+      } else if (status === 'Partial Automated') {
+        sentence = `Reduces monthly operational workload by ${workloadStr} ${durClause} ${toolClause} through ${actionPhrase}.`;
+      }
+
+      document.getElementById('pgOutputText').innerText = sentence.replace(/\s+/g, ' ');
+    }
+
+    // Initialize Playground
+    runPlayground();
+
+    // Active Nav Spy
+    window.addEventListener('scroll', () => {
+      const sections = document.querySelectorAll('section');
+      const navLinks = document.querySelectorAll('.nav-links a');
+      let currentSectionId = '';
+
+      sections.forEach(section => {
+        const top = section.offsetTop - 100;
+        const height = section.offsetHeight;
+        if (window.scrollY >= top && window.scrollY < top + height) {
+          currentSectionId = section.getAttribute('id');
+        }
+      });
+
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === `#${currentSectionId}`) {
+          link.classList.add('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

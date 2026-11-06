@@ -1,0 +1,3158 @@
+{
+  "metadata": {
+    "source_workbook": "SOP L1 AGIT.xlsx",
+    "sheet_name": "Breakdown Activity",
+    "extracted_at": "2026-11-05T10:04:16.062Z",
+    "total_rows_meta": 3460,
+    "columns_detected_meta": 36,
+    "file_size_bytes": 3863075,
+    "sha256": "2ee85f439665495b49a2ff8913f1cf7ce91d700a114a2d19ac33dbb006ef4e90",
+    "total_records_processed": 3460,
+    "total_columns": 37
+  },
+  "chunks": [
+    {
+      "chunk_index": 0,
+      "start_idx": 0,
+      "end_idx": 499,
+      "record_count": 500
+    },
+    {
+      "chunk_index": 1,
+      "start_idx": 500,
+      "end_idx": 999,
+      "record_count": 500
+    },
+    {
+      "chunk_index": 2,
+      "start_idx": 1000,
+      "end_idx": 1499,
+      "record_count": 500
+    },
+    {
+      "chunk_index": 3,
+      "start_idx": 1500,
+      "end_idx": 1999,
+      "record_count": 500
+    },
+    {
+      "chunk_index": 4,
+      "start_idx": 2000,
+      "end_idx": 2499,
+      "record_count": 500
+    },
+    {
+      "chunk_index": 5,
+      "start_idx": 2500,
+      "end_idx": 2999,
+      "record_count": 500
+    },
+    {
+      "chunk_index": 6,
+      "start_idx": 3000,
+      "end_idx": 3459,
+      "record_count": 460
+    }
+  ],
+  "column_profiles": {
+    "activity_id": {
+      "name": "activity_id",
+      "role": "Primary Key",
+      "description": "Identifier unik aktivitas, identik dengan CONCAT",
+      "types_observed": [
+        "str"
+      ],
+      "total_records": 3460,
+      "null_count": 0,
+      "empty_str_count": 0,
+      "missing_count": 0,
+      "missing_pct": 0.0,
+      "filled_count": 3460,
+      "filled_pct": 100.0,
+      "unique_count": 3460,
+      "samples": [
+        "AdServer - Restart Redis Service - offdeckpdb1",
+        "AdServer - Redis Sentinel Service - offdeckpdb1",
+        "AdServer - Restart Redis Service - offdeckpdb2",
+        "AdServer - Redis Sentinel Service - offdeckpdb2",
+        "AdServer - Cek Campaign Offdeck AdServer"
+      ],
+      "is_numeric": false,
+      "numeric_stats": null,
+      "top_categories": [
+        {
+          "value": "AdServer - Restart Redis Service - offdeckpdb1",
+          "count": 1,
+          "pct": 0.03
+        },
+        {
+          "value": "AdServer - Redis Sentinel Service - offdeckpdb1",
+          "count": 1,
+          "pct": 0.03
+        },
+        {
+          "value": "AdServer - Restart Redis Service - offdeckpdb2",
+          "count": 1,
+          "pct": 0.03
+        },
+        {
+          "value": "AdServer - Redis Sentinel Service - offdeckpdb2",
+          "count": 1,
+          "pct": 0.03
+        },
+        {
+          "value": "AdServer - Cek Campaign Offdeck AdServer",
+          "count": 1,
+          "pct": 0.03
+        },
+        {
+          "value": "AdServer - Create User CMS",
+          "count": 1,
+          "pct": 0.03
+        },
+        {
+          "value": "Agnosd - Cronjob Housekeeping server agnosbackpapp1 path /apps/bersih2/scriptbersih.sh",
+          "count": 1,
+          "pct": 0.03
+        },
+        {
+          "value": "Agnosd - Cronjob Housekeeping server agnosbackpapp1 path /apps/script/bersih2/script_bck_surrounding.sh",
+          "count": 1,
+          "pct": 0.03
+        },
+        {
+          "value": "Agnosd - Cronjob Housekeeping server agnosbackpapp1 path /apps/script/hk_Reaktivasi/hkReaktivasi.sh",
+          "count": 1,
+          "pct": 0.03
+        },
+        {
+          "value": "Agnosd - Cronjob Housekeeping server agnosbackpapp1 path /apps/script/reportCB/script.sh",
+          "count": 1,
+          "pct": 0.03
+        }
+      ]
+    },
+    "APPS": {
+      "name": "APPS",
+      "role": "Application Key",
+      "description": "Nama aplikasi sistem, kunci relasi ke metadata aplikasi",
+      "types_observed": [
+        "str"
+      ],
+      "total_records": 3460,
+      "null_count": 0,
+      "empty_str_count": 0,
+      "missing_count": 0,
+      "missing_pct": 0.0,
+      "filled_count": 3460,
+      "filled_pct": 100.0,
+      "unique_count": 125,
+      "samples": [
+        "AdServer",
+        "AdServer",
+        "AdServer",
+        "AdServer",
+        "AdServer"
+      ],
+      "is_numeric": false,
+      "numeric_stats": null,
+      "top_categories": [
+        {
+          "value": "Sienna",
+          "count": 173,
+          "pct": 5.0
+        },
+        {
+          "value": "DOM",
+          "count": 153,
+          "pct": 4.42
+        },
+        {
+          "value": "Outsystem",
+          "count": 114,
+          "pct": 3.29
+        },
+        {
+          "value": "MSight Dashboard",
+          "count": 108,
+          "pct": 3.12
+        },
+        {
+          "value": "SMS Gateway",
+          "count": 104,
+          "pct": 3.01
+        },
+        {
+          "value": "C2P",
+          "count": 99,
+          "pct": 2.86
+        },
+        {
+          "value": "Elisa",
+          "count": 92,
+          "pct": 2.66
+        },
+        {
+          "value": "MBP",
+          "count": 89,
+          "pct": 2.57
+        },
+        {
+          "value": "IPTV Platform",
+          "count": 89,
+          "pct": 2.57
+        },
+        {
+          "value": "Telkomsel Portal",
+          "count": 86,
+          "pct": 2.49
+        }
+      ]
+    },
+    "ACTIVITY NAME": {
+      "name": "ACTIVITY NAME",
+      "role": "Core Dimension",
+      "description": "Nama spesifik aktivitas operasional L1",
+      "types_observed": [
+        "str"
+      ],
+      "total_records": 3460,
+      "null_count": 0,
+      "empty_str_count": 0,
+      "missing_count": 0,
+      "missing_pct": 0.0,
+      "filled_count": 3460,
+      "filled_pct": 100.0,
+      "unique_count": 3222,
+      "samples": [
+        "Restart Redis Service - offdeckpdb1",
+        "Redis Sentinel Service - offdeckpdb1",
+        "Restart Redis Service - offdeckpdb2",
+        "Redis Sentinel Service - offdeckpdb2",
+        "Cek Campaign Offdeck AdServer"
+      ],
+      "is_numeric": false,
+      "numeric_stats": null,
+      "top_categories": [
+        {
+          "value": "Monitoring CPU via Grafana",
+          "count": 24,
+          "pct": 0.69
+        },
+        {
+          "value": "Monitoring Disk via Grafana",
+          "count": 24,
+          "pct": 0.69
+        },
+        {
+          "value": "Monitoring Memory via Grafana",
+          "count": 24,
+          "pct": 0.69
+        },
+        {
+          "value": "Parameter Setting ITC-03-G-02",
+          "count": 22,
+          "pct": 0.64
+        },
+        {
+          "value": "Monitoring Transaction via Grafana",
+          "count": 17,
+          "pct": 0.49
+        },
+        {
+          "value": "Monitoring Success Rate via Grafana",
+          "count": 12,
+          "pct": 0.35
+        },
+        {
+          "value": "Monitoring AVERAGE RESPONSETIME via Grafana",
+          "count": 9,
+          "pct": 0.26
+        },
+        {
+          "value": "Monitoring CPU",
+          "count": 6,
+          "pct": 0.17
+        },
+        {
+          "value": "Monitoring Memory",
+          "count": 6,
+          "pct": 0.17
+        },
+        {
+          "value": "Housekeeping Cron indigipdb1 E: - Malam",
+          "count": 6,
+          "pct": 0.17
+        }
+      ]
+    },
+    "TYPE ACTIVITY": {
+      "name": "TYPE ACTIVITY",
+      "role": "Category Dimension",
+      "description": "Klasifikasi jenis aktivitas awal (sumber manual)",
+      "types_observed": [
+        "str"
+      ],
+      "total_records": 3460,
+      "null_count": 0,
+      "empty_str_count": 41,
+      "missing_count": 41,
+      "missing_pct": 1.18,
+      "filled_count": 3419,
+      "filled_pct": 98.82,
+      "unique_count": 9,
+      "samples": [
+        "Incident Handling",
+        "Incident Handling",
+        "Incident Handling",
+        "Incident Handling",
+        "Service Request"
+      ],
+      "is_numeric": false,
+      "numeric_stats": null,
+      "top_categories": [
+        {
+          "value": "Service Request",
+          "count": 944,
+          "pct": 27.28
+        },
+        {
+          "value": "Housekeeping",
+          "count": 637,
+          "pct": 18.41
+        },
+        {
+          "value": "Incident Handling",
+          "count": 635,
+          "pct": 18.35
+        },
+        {
+          "value": "Monitoring and Alerting",
+          "count": 484,
+          "pct": 13.99
+        },
+        {
+          "value": "Complaint Handling",
+          "count": 386,
+          "pct": 11.16
+        },
+        {
+          "value": "Daily Activity",
+          "count": 193,
+          "pct": 5.58
+        },
+        {
+          "value": "Audit Compliance",
+          "count": 78,
+          "pct": 2.25
+        },
+        {
+          "value": "Change Management",
+          "count": 51,
+          "pct": 1.47
+        },
+        {
+          "value": "Monitoring",
+          "count": 11,
+          "pct": 0.32
+        }
+      ]
+    },
+    "Workload": {
+      "name": "Workload",
+      "role": "Derived Metric",
+      "description": "Beban kerja bulanan dalam menit-orang (Durasi × Event Per Month)",
+      "types_observed": [
+        "str"
+      ],
+      "total_records": 3460,
+      "null_count": 0,
+      "empty_str_count": 380,
+      "missing_count": 380,
+      "missing_pct": 10.98,
+      "filled_count": 3080,
+      "filled_pct": 89.02,
+      "unique_count": 53,
+      "samples": [
+        "15",
+        "15",
+        "15",
+        "15",
+        "0"
+      ],
+      "is_numeric": true,
+      "numeric_stats": {
+        "count_numeric": 3080,
+        "non_numeric_count": 0,
+        "min": 0.0,
+        "max": 27360.0,
+        "mean": 70.1691,
+        "median": 0.0,
+        "std": 533.7159,
+        "q25": 0.0,
+        "q75": 15.0,
+        "iqr": 15.0,
+        "zero_count": 1605,
+        "negative_count": 0
+      },
+      "top_categories": [
+        {
+          "value": "0",
+          "count": 1605,
+          "pct": 46.39
+        },
+        {
+          "value": "15",
+          "count": 441,
+          "pct": 12.75
+        },
+        {
+          "value": "5",
+          "count": 171,
+          "pct": 4.94
+        },
+        {
+          "value": "10",
+          "count": 123,
+          "pct": 3.55
+        },
+        {
+          "value": "300",
+          "count": 118,
+          "pct": 3.41
+        },
+        {
+          "value": "30",
+          "count": 99,
+          "pct": 2.86
+        },
+        {
+          "value": "20",
+          "count": 82,
+          "pct": 2.37
+        },
+        {
+          "value": "450",
+          "count": 60,
+          "pct": 1.73
+        },
+        {
+          "value": "150",
+          "count": 57,
+          "pct": 1.65
+        },
+        {
+          "value": "25",
+          "count": 57,
+          "pct": 1.65
+        }
+      ]
+    },
+    "Workload after": {
+      "name": "Workload after",
+      "role": "Derived Metric",
+      "description": "Beban kerja bulanan setelah otomasi/improvement (Durasi after × Event)",
+      "types_observed": [
+        "str"
+      ],
+      "total_records": 3460,
+      "null_count": 0,
+      "empty_str_count": 380,
+      "missing_count": 380,
+      "missing_pct": 10.98,
+      "filled_count": 3080,
+      "filled_pct": 89.02,
+      "unique_count": 54,
+      "samples": [
+        "1,5",
+        "1,5",
+        "1,5",
+        "1,5",
+        "0"
+      ],
+      "is_numeric": true,
+      "numeric_stats": {
+        "count_numeric": 3080,
+        "non_numeric_count": 0,
+        "min": 0.0,
+        "max": 2736.0,
+        "mean": 8.6825,
+        "median": 0.0,
+        "std": 58.0691,
+        "q25": 0.0,
+        "q75": 1.5,
+        "iqr": 1.5,
+        "zero_count": 1605,
+        "negative_count": 0
+      },
+      "top_categories": [
+        {
+          "value": "0",
+          "count": 1605,
+          "pct": 46.39
+        },
+        {
+          "value": "1,5",
+          "count": 441,
+          "pct": 12.75
+        },
+        {
+          "value": "0,5",
+          "count": 171,
+          "pct": 4.94
+        },
+        {
+          "value": "1",
+          "count": 123,
+          "pct": 3.55
+        },
+        {
+          "value": "3",
+          "count": 99,
+          "pct": 2.86
+        },
+        {
+          "value": "30",
+          "count": 99,
+          "pct": 2.86
+        },
+        {
+          "value": "2",
+          "count": 82,
+          "pct": 2.37
+        },
+        {
+          "value": "45",
+          "count": 60,
+          "pct": 1.73
+        },
+        {
+          "value": "15",
+          "count": 57,
+          "pct": 1.65
+        },
+        {
+          "value": "2,5",
+          "count": 57,
+          "pct": 1.65
+        }
+      ]
+    },
+    "Link Confluence": {
+      "name": "Link Confluence",
+      "role": "Documentation Link",
+      "description": "Tautan ke SOP / Runbook di Confluence Telkomsel",
+      "types_observed": [
+        "str"
+      ],
+      "total_records": 3460,
+      "null_count": 0,
+      "empty_str_count": 268,
+      "missing_count": 268,
+      "missing_pct": 7.75,
+      "filled_count": 3192,
+      "filled_pct": 92.25,
+      "unique_count": 1767,
+      "samples": [
+        "https://confluence.telkomsel.co.id/display/ITOPSRunbook/AdServer+-+Restart+Service",
+        "https://confluence.telkomsel.co.id/display/ITOPSRunbook/AdServer+-+Restart+Service",
+        "https://confluence.telkomsel.co.id/display/ITOPSRunbook/AdServer+-+Restart+Service",
+        "https://confluence.telkomsel.co.id/display/ITOPSRunbook/AdServer+-+Restart+Service",
+        "https://confluence.telkomsel.co.id/display/ITOPSRunbook/AdServer+-+Cek+Campaign+Offdeck+AdServer"
+      ],
+      "is_numeric": false,
+      "numeric_stats": null,
+      "top_categories": [
+        {
+          "value": "https://confluence.telkomsel.co.id/display/ITOPSRunbook/DOM+-+Cronjob+Housekeeping",
+          "count": 128,
+          "pct": 3.7
+        },
+        {
+          "value": "https://confluence.telkomsel.co.id/spaces/ITOPSRunbook/pages/170558886/Outsystem+-+Housekeeping+Disk",
+          "count": 110,
+          "pct": 3.18
+        },
+        {
+          "value": "https://confluence.telkomsel.co.id/x/RoHuC",
+          "count": 101,
+          "pct": 2.92
+        },
+        {
+          "value": "https://confluence.telkomsel.co.id/pages/viewpage.action?pageId=227673665",
+          "count": 85,
+          "pct": 2.46
+        },
+        {
+          "value": "https://confluence.telkomsel.co.id/display/ITOPSRunbook/C2P+-+Restart+Service",
+          "count": 84,
+          "pct": 2.43
+        },
+        {
+          "value": "https://confluence.telkomsel.co.id/display/ITOPSRunbook/AgnosD+-+Cronjob+Auto+Housekeeping",
+          "count": 48,
+          "pct": 1.39
+        },
+        {
+          "value": "https://confluence.telkomsel.co.id/pages/viewpage.action?pageId=227674206",
+          "count": 39,
+          "pct": 1.13
+        },
+        {
+          "value": "https://confluence.telkomsel.co.id/pages/viewpage.action?pageId=227805182",
+          "count": 27,
+          "pct": 0.78
+        },
+        {
+          "value": "https://confluence.telkomsel.co.id/display/ITOPSRunbook/Office+365+Productivity+-+Auto+Housekeeping",
+          "count": 27,
+          "pct": 0.78
+        },
+        {
+          "value": "https://confluence.telkomsel.co.id/x/dJjtCw",
+          "count": 23,
+          "pct": 0.66
+        }
+      ]
+    },
+    "Link Wiki": {
+      "name": "Link Wiki",
+      "role": "Documentation Link",
+      "description": "Tautan wiki dokumentasi (seluruh baris kosong)",
+      "types_observed": [
+        "str"
+      ],
+      "total_records": 3460,
+      "null_count": 0,
+      "empty_str_count": 3460,
+      "missing_count": 3460,
+      "missing_pct": 100.0,
+      "filled_count": 0,
+      "filled_pct": 0.0,
+      "unique_count": 0,
+      "samples": [],
+      "is_numeric": false,
+      "numeric_stats": null,
+      "top_categories": []
+    },
+    "Improvement Category": {
+      "name": "Improvement Category",
+      "role": "Improvement Dimension",
+      "description": "Kategori rencana improvement (misal: As Is, Automation)",
+      "types_observed": [
+        "str"
+      ],
+      "total_records": 3460,
+      "null_count": 0,
+      "empty_str_count": 223,
+      "missing_count": 223,
+      "missing_pct": 6.45,
+      "filled_count": 3237,
+      "filled_pct": 93.55,
+      "unique_count": 3,
+      "samples": [
+        "As Is",
+        "As Is",
+        "As Is",
+        "As Is",
+        "As Is"
+      ],
+      "is_numeric": false,
+      "numeric_stats": null,
+      "top_categories": [
+        {
+          "value": "Automation",
+          "count": 1480,
+          "pct": 42.77
+        },
+        {
+          "value": "As Is",
+          "count": 1274,
+          "pct": 36.82
+        },
+        {
+          "value": "Dismantled",
+          "count": 483,
+          "pct": 13.96
+        }
+      ]
+    },
+    "Category Notes": {
+      "name": "Category Notes",
+      "role": "Improvement Dimension",
+      "description": "Catatan kategori tindakan (misal: As Is, To Be Automated)",
+      "types_observed": [
+        "str"
+      ],
+      "total_records": 3460,
+      "null_count": 0,
+      "empty_str_count": 230,
+      "missing_count": 230,
+      "missing_pct": 6.65,
+      "filled_count": 3230,
+      "filled_pct": 93.35,
+      "unique_count": 8,
+      "samples": [
+        "To Be Automated",
+        "To Be Automated",
+        "To Be Automated",
+        "To Be Automated",
+        "Not Possible Automate"
+      ],
+      "is_numeric": false,
+      "numeric_stats": null,
+      "top_categories": [
+        {
+          "value": "Already Automation",
+          "count": 1468,
+          "pct": 42.43
+        },
+        {
+          "value": "Not Possible Automate",
+          "count": 774,
+          "pct": 22.37
+        },
+        {
+          "value": "Dismantled",
+          "count": 486,
+          "pct": 14.05
+        },
+        {
+          "value": "As Is",
+          "count": 309,
+          "pct": 8.93
+        },
+        {
+          "value": "To Be Automated",
+          "count": 121,
+          "pct": 3.5
+        },
+        {
+          "value": "Not Yet Solution",
+          "count": 63,
+          "pct": 1.82
+        },
+        {
+          "value": "Already Automated",
+          "count": 8,
+          "pct": 0.23
+        },
+        {
+          "value": "Need Further Assessment",
+          "count": 1,
+          "pct": 0.03
+        }
+      ]
+    },
+    "Action by": {
+      "name": "Action by",
+      "role": "Operational Role",
+      "description": "Pelaksana aktivitas operasional (misal: L1, Vendor)",
+      "types_observed": [
+        "str"
+      ],
+      "total_records": 3460,
+      "null_count": 0,
+      "empty_str_count": 2738,
+      "missing_count": 2738,
+      "missing_pct": 79.13,
+      "filled_count": 722,
+      "filled_pct": 20.87,
+      "unique_count": 2,
+      "samples": [
+        "L1",
+        "L1",
+        "L1",
+        "L1",
+        "L1"
+      ],
+      "is_numeric": false,
+      "numeric_stats": null,
+      "top_categories": [
+        {
+          "value": "L1",
+          "count": 699,
+          "pct": 20.2
+        },
+        {
+          "value": "Part of L2",
+          "count": 23,
+          "pct": 0.66
+        }
+      ]
+    },
+    "New Improvement Category Fixed": {
+      "name": "New Improvement Category Fixed",
+      "role": "Standardized Dimension",
+      "description": "Kategori improvement yang telah distandardisasi/dibersihkan",
+      "types_observed": [
+        "str"
+      ],
+      "total_records": 3460,
+      "null_count": 0,
+      "empty_str_count": 176,
+      "missing_count": 176,
+      "missing_pct": 5.09,
+      "filled_count": 3284,
+      "filled_pct": 94.91,
+      "unique_count": 6,
+      "samples": [
+        "To Be Automated",
+        "To Be Automated",
+        "To Be Automated",
+        "To Be Automated",
+        "As Is"
+      ],
+      "is_numeric": false,
+      "numeric_stats": null,
+      "top_categories": [
+        {
+          "value": "Automation",
+          "count": 1437,
+          "pct": 41.53
+        },
+        {
+          "value": "As Is",
+          "count": 1068,
+          "pct": 30.87
+        },
+        {
+          "value": "New Dismantled",
+          "count": 254,
+          "pct": 7.34
+        },
+        {
+          "value": "0",
+          "count": 203,
+          "pct": 5.87
+        },
+        {
+          "value": "Old Dismantled",
+          "count": 196,
+          "pct": 5.66
+        },
+        {
+          "value": "To Be Automated",
+          "count": 126,
+          "pct": 3.64
+        }
+      ]
+    },
+    "Additional Notes": {
+      "name": "Additional Notes",
+      "role": "Free-text Note",
+      "description": "Catatan tambahan terkait verifikasi/kondisi aktivitas",
+      "types_observed": [
+        "str"
+      ],
+      "total_records": 3460,
+      "null_count": 0,
+      "empty_str_count": 265,
+      "missing_count": 265,
+      "missing_pct": 7.66,
+      "filled_count": 3195,
+      "filled_pct": 92.34,
+      "unique_count": 164,
+      "samples": [
+        "Auto Restart / Self Healing via AION (need further assessment)",
+        "Auto Restart / Self Healing via AION (need further assessment)",
+        "Auto Restart / Self Healing via AION (need further assessment)",
+        "Auto Restart / Self Healing via AION (need further assessment)",
+        "GUI based"
+      ],
+      "is_numeric": false,
+      "numeric_stats": null,
+      "top_categories": [
+        {
+          "value": "Already automate",
+          "count": 628,
+          "pct": 18.15
+        },
+        {
+          "value": "GUI",
+          "count": 379,
+          "pct": 10.95
+        },
+        {
+          "value": "Cron already exist",
+          "count": 285,
+          "pct": 8.24
+        },
+        {
+          "value": "Alert already exist",
+          "count": 243,
+          "pct": 7.02
+        },
+        {
+          "value": "No Action",
+          "count": 149,
+          "pct": 4.31
+        },
+        {
+          "value": "Need further assessment",
+          "count": 85,
+          "pct": 2.46
+        },
+        {
+          "value": "GUI based (need further assessment)",
+          "count": 84,
+          "pct": 2.43
+        },
+        {
+          "value": "0",
+          "count": 76,
+          "pct": 2.2
+        },
+        {
+          "value": "Already Automated",
+          "count": 66,
+          "pct": 1.91
+        },
+        {
+          "value": "No Activity",
+          "count": 66,
+          "pct": 1.91
+        }
+      ]
+    },
+    "DIV": {
+      "name": "DIV",
+      "role": "Organizational Lookup",
+      "description": "Divisi pemilik aplikasi (hasil lookup via APPS)",
+      "types_observed": [
+        "str"
+      ],
+      "total_records": 3460,
+      "null_count": 0,
+      "empty_str_count": 0,
+      "missing_count": 0,
+      "missing_pct": 0.0,
+      "filled_count": 3460,
+      "filled_pct": 100.0,
+      "unique_count": 4,
+      "samples": [
+        "IT CFB",
+        "IT CFB",
+        "IT CFB",
+        "IT CFB",
+        "IT CFB"
+      ],
+      "is_numeric": false,
+      "numeric_stats": null,
+      "top_categories": [
+        {
+          "value": "IT CFB",
+          "count": 1847,
+          "pct": 53.38
+        },
+        {
+          "value": "IT BDC",
+          "count": 1604,
+          "pct": 46.36
+        },
+        {
+          "value": "#N/A",
+          "count": 5,
+          "pct": 0.14
+        },
+        {
+          "value": "IT BITE",
+          "count": 4,
+          "pct": 0.12
+        }
+      ]
+    },
+    "CONCAT": {
+      "name": "CONCAT",
+      "role": "Composite Key",
+      "description": "Penggabungan APPS - ACTIVITY NAME",
+      "types_observed": [
+        "str"
+      ],
+      "total_records": 3460,
+      "null_count": 0,
+      "empty_str_count": 0,
+      "missing_count": 0,
+      "missing_pct": 0.0,
+      "filled_count": 3460,
+      "filled_pct": 100.0,
+      "unique_count": 3460,
+      "samples": [
+        "AdServer - Restart Redis Service - offdeckpdb1",
+        "AdServer - Redis Sentinel Service - offdeckpdb1",
+        "AdServer - Restart Redis Service - offdeckpdb2",
+        "AdServer - Redis Sentinel Service - offdeckpdb2",
+        "AdServer - Cek Campaign Offdeck AdServer"
+      ],
+      "is_numeric": false,
+      "numeric_stats": null,
+      "top_categories": [
+        {
+          "value": "AdServer - Restart Redis Service - offdeckpdb1",
+          "count": 1,
+          "pct": 0.03
+        },
+        {
+          "value": "AdServer - Redis Sentinel Service - offdeckpdb1",
+          "count": 1,
+          "pct": 0.03
+        },
+        {
+          "value": "AdServer - Restart Redis Service - offdeckpdb2",
+          "count": 1,
+          "pct": 0.03
+        },
+        {
+          "value": "AdServer - Redis Sentinel Service - offdeckpdb2",
+          "count": 1,
+          "pct": 0.03
+        },
+        {
+          "value": "AdServer - Cek Campaign Offdeck AdServer",
+          "count": 1,
+          "pct": 0.03
+        },
+        {
+          "value": "AdServer - Create User CMS",
+          "count": 1,
+          "pct": 0.03
+        },
+        {
+          "value": "Agnosd - Cronjob Housekeeping server agnosbackpapp1 path /apps/bersih2/scriptbersih.sh",
+          "count": 1,
+          "pct": 0.03
+        },
+        {
+          "value": "Agnosd - Cronjob Housekeeping server agnosbackpapp1 path /apps/script/bersih2/script_bck_surrounding.sh",
+          "count": 1,
+          "pct": 0.03
+        },
+        {
+          "value": "Agnosd - Cronjob Housekeeping server agnosbackpapp1 path /apps/script/hk_Reaktivasi/hkReaktivasi.sh",
+          "count": 1,
+          "pct": 0.03
+        },
+        {
+          "value": "Agnosd - Cronjob Housekeeping server agnosbackpapp1 path /apps/script/reportCB/script.sh",
+          "count": 1,
+          "pct": 0.03
+        }
+      ]
+    },
+    "DEPT": {
+      "name": "DEPT",
+      "role": "Organizational Lookup",
+      "description": "Departemen pemilik aplikasi (hasil lookup via APPS)",
+      "types_observed": [
+        "str"
+      ],
+      "total_records": 3460,
+      "null_count": 0,
+      "empty_str_count": 0,
+      "missing_count": 0,
+      "missing_pct": 0.0,
+      "filled_count": 3460,
+      "filled_pct": 100.0,
+      "unique_count": 7,
+      "samples": [
+        "CTEOPM",
+        "CTEOPM",
+        "CTEOPM",
+        "CTEOPM",
+        "CTEOPM"
+      ],
+      "is_numeric": false,
+      "numeric_stats": null,
+      "top_categories": [
+        {
+          "value": "PFIP",
+          "count": 996,
+          "pct": 28.79
+        },
+        {
+          "value": "ENDIGI",
+          "count": 769,
+          "pct": 22.23
+        },
+        {
+          "value": "CSOM",
+          "count": 658,
+          "pct": 19.02
+        },
+        {
+          "value": "CTEOPM",
+          "count": 568,
+          "pct": 16.42
+        },
+        {
+          "value": "ByU & IoT",
+          "count": 271,
+          "pct": 7.83
+        },
+        {
+          "value": "IPOM",
+          "count": 193,
+          "pct": 5.58
+        },
+        {
+          "value": "#N/A",
+          "count": 5,
+          "pct": 0.14
+        }
+      ]
+    },
+    "APP PRIORITY": {
+      "name": "APP PRIORITY",
+      "role": "Application Priority",
+      "description": "Tingkat prioritas aplikasi (misal: Business Critical)",
+      "types_observed": [
+        "str"
+      ],
+      "total_records": 3460,
+      "null_count": 0,
+      "empty_str_count": 0,
+      "missing_count": 0,
+      "missing_pct": 0.0,
+      "filled_count": 3460,
+      "filled_pct": 100.0,
+      "unique_count": 5,
+      "samples": [
+        "Business Critical",
+        "Business Critical",
+        "Business Critical",
+        "Business Critical",
+        "Business Critical"
+      ],
+      "is_numeric": false,
+      "numeric_stats": null,
+      "top_categories": [
+        {
+          "value": "Mission Critical",
+          "count": 1418,
+          "pct": 40.98
+        },
+        {
+          "value": "Business Important",
+          "count": 972,
+          "pct": 28.09
+        },
+        {
+          "value": "Business Critical",
+          "count": 878,
+          "pct": 25.38
+        },
+        {
+          "value": "Business Support",
+          "count": 144,
+          "pct": 4.16
+        },
+        {
+          "value": "#N/A",
+          "count": 48,
+          "pct": 1.39
+        }
+      ]
+    },
+    "Number Activity": {
+      "name": "Number Activity",
+      "role": "Sequence/Counter",
+      "description": "Penanda nomor aktivitas (dominan bernilai '1')",
+      "types_observed": [
+        "str"
+      ],
+      "total_records": 3460,
+      "null_count": 0,
+      "empty_str_count": 87,
+      "missing_count": 87,
+      "missing_pct": 2.51,
+      "filled_count": 3373,
+      "filled_pct": 97.49,
+      "unique_count": 1,
+      "samples": [
+        "1",
+        "1",
+        "1",
+        "1",
+        "1"
+      ],
+      "is_numeric": true,
+      "numeric_stats": {
+        "count_numeric": 3373,
+        "non_numeric_count": 0,
+        "min": 1.0,
+        "max": 1.0,
+        "mean": 1.0,
+        "median": 1.0,
+        "std": 0.0,
+        "q25": 1.0,
+        "q75": 1.0,
+        "iqr": 0.0,
+        "zero_count": 0,
+        "negative_count": 0
+      },
+      "top_categories": [
+        {
+          "value": "1",
+          "count": 3373,
+          "pct": 97.49
+        }
+      ]
+    },
+    "Durasi (Menit)": {
+      "name": "Durasi (Menit)",
+      "role": "Operational Metric",
+      "description": "Durasi pengerjaan aktivitas per satu kejadian (menit)",
+      "types_observed": [
+        "str"
+      ],
+      "total_records": 3460,
+      "null_count": 0,
+      "empty_str_count": 215,
+      "missing_count": 215,
+      "missing_pct": 6.21,
+      "filled_count": 3245,
+      "filled_pct": 93.79,
+      "unique_count": 29,
+      "samples": [
+        "15",
+        "15",
+        "15",
+        "15",
+        "10"
+      ],
+      "is_numeric": true,
+      "numeric_stats": {
+        "count_numeric": 3165,
+        "non_numeric_count": 80,
+        "min": 0.0,
+        "max": 1440.0,
+        "mean": 19.2562,
+        "median": 15.0,
+        "std": 34.1979,
+        "q25": 10.0,
+        "q75": 20.0,
+        "iqr": 10.0,
+        "zero_count": 33,
+        "negative_count": 0
+      },
+      "top_categories": [
+        {
+          "value": "15",
+          "count": 942,
+          "pct": 27.23
+        },
+        {
+          "value": "10",
+          "count": 770,
+          "pct": 22.25
+        },
+        {
+          "value": "30",
+          "count": 551,
+          "pct": 15.92
+        },
+        {
+          "value": "5",
+          "count": 473,
+          "pct": 13.67
+        },
+        {
+          "value": "20",
+          "count": 202,
+          "pct": 5.84
+        },
+        {
+          "value": "60",
+          "count": 64,
+          "pct": 1.85
+        },
+        {
+          "value": "120",
+          "count": 41,
+          "pct": 1.18
+        },
+        {
+          "value": "40",
+          "count": 38,
+          "pct": 1.1
+        },
+        {
+          "value": "0",
+          "count": 33,
+          "pct": 0.95
+        },
+        {
+          "value": "30 menit",
+          "count": 31,
+          "pct": 0.9
+        }
+      ]
+    },
+    "Event Per Month": {
+      "name": "Event Per Month",
+      "role": "Operational Frequency",
+      "description": "Frekuensi kemunculan aktivitas dalam satu bulan",
+      "types_observed": [
+        "str"
+      ],
+      "total_records": 3460,
+      "null_count": 0,
+      "empty_str_count": 218,
+      "missing_count": 218,
+      "missing_pct": 6.3,
+      "filled_count": 3242,
+      "filled_pct": 93.7,
+      "unique_count": 36,
+      "samples": [
+        "1",
+        "1",
+        "1",
+        "1",
+        "0"
+      ],
+      "is_numeric": true,
+      "numeric_stats": {
+        "count_numeric": 3167,
+        "non_numeric_count": 75,
+        "min": 0.0,
+        "max": 495.0,
+        "mean": 4.566,
+        "median": 0.0,
+        "std": 15.99,
+        "q25": 0.0,
+        "q75": 1.0,
+        "iqr": 1.0,
+        "zero_count": 1630,
+        "negative_count": 0
+      },
+      "top_categories": [
+        {
+          "value": "0",
+          "count": 1630,
+          "pct": 47.11
+        },
+        {
+          "value": "1",
+          "count": 942,
+          "pct": 27.23
+        },
+        {
+          "value": "30",
+          "count": 269,
+          "pct": 7.77
+        },
+        {
+          "value": "5",
+          "count": 92,
+          "pct": 2.66
+        },
+        {
+          "value": "N/A",
+          "count": 68,
+          "pct": 1.97
+        },
+        {
+          "value": "0,333333333",
+          "count": 40,
+          "pct": 1.16
+        },
+        {
+          "value": "10",
+          "count": 40,
+          "pct": 1.16
+        },
+        {
+          "value": "15",
+          "count": 30,
+          "pct": 0.87
+        },
+        {
+          "value": "60",
+          "count": 23,
+          "pct": 0.66
+        },
+        {
+          "value": "2",
+          "count": 19,
+          "pct": 0.55
+        }
+      ]
+    },
+    "Durasi after": {
+      "name": "Durasi after",
+      "role": "Operational Metric",
+      "description": "Estimasi durasi pengerjaan setelah otomasi (menit)",
+      "types_observed": [
+        "str"
+      ],
+      "total_records": 3460,
+      "null_count": 0,
+      "empty_str_count": 380,
+      "missing_count": 380,
+      "missing_pct": 10.98,
+      "filled_count": 3080,
+      "filled_pct": 89.02,
+      "unique_count": 22,
+      "samples": [
+        "1,5",
+        "1,5",
+        "1,5",
+        "1,5",
+        "1"
+      ],
+      "is_numeric": true,
+      "numeric_stats": {
+        "count_numeric": 3080,
+        "non_numeric_count": 0,
+        "min": 0.0,
+        "max": 144.0,
+        "mean": 1.9945,
+        "median": 1.5,
+        "std": 3.5204,
+        "q25": 1.0,
+        "q75": 2.0,
+        "iqr": 1.0,
+        "zero_count": 33,
+        "negative_count": 0
+      },
+      "top_categories": [
+        {
+          "value": "1,5",
+          "count": 887,
+          "pct": 25.64
+        },
+        {
+          "value": "1",
+          "count": 734,
+          "pct": 21.21
+        },
+        {
+          "value": "3",
+          "count": 546,
+          "pct": 15.78
+        },
+        {
+          "value": "0,5",
+          "count": 466,
+          "pct": 13.47
+        },
+        {
+          "value": "2",
+          "count": 202,
+          "pct": 5.84
+        },
+        {
+          "value": "6",
+          "count": 64,
+          "pct": 1.85
+        },
+        {
+          "value": "12",
+          "count": 41,
+          "pct": 1.18
+        },
+        {
+          "value": "4",
+          "count": 38,
+          "pct": 1.1
+        },
+        {
+          "value": "0",
+          "count": 33,
+          "pct": 0.95
+        },
+        {
+          "value": "10",
+          "count": 19,
+          "pct": 0.55
+        }
+      ]
+    },
+    "Automation/Manual": {
+      "name": "Automation/Manual",
+      "role": "Operational Mode",
+      "description": "Mode eksekusi aktivitas (Manual vs Automated)",
+      "types_observed": [
+        "str"
+      ],
+      "total_records": 3460,
+      "null_count": 0,
+      "empty_str_count": 223,
+      "missing_count": 223,
+      "missing_pct": 6.45,
+      "filled_count": 3237,
+      "filled_pct": 93.55,
+      "unique_count": 2,
+      "samples": [
+        "Manual",
+        "Manual",
+        "Manual",
+        "Manual",
+        "Manual"
+      ],
+      "is_numeric": false,
+      "numeric_stats": null,
+      "top_categories": [
+        {
+          "value": "Manual",
+          "count": 1686,
+          "pct": 48.73
+        },
+        {
+          "value": "AO",
+          "count": 1551,
+          "pct": 44.83
+        }
+      ]
+    },
+    "FMC/Mobile": {
+      "name": "FMC/Mobile",
+      "role": "Business Domain",
+      "description": "Domain layanan bisnis (Mobile vs FMC, hasil lookup SOP)",
+      "types_observed": [
+        "str"
+      ],
+      "total_records": 3460,
+      "null_count": 0,
+      "empty_str_count": 388,
+      "missing_count": 388,
+      "missing_pct": 11.21,
+      "filled_count": 3072,
+      "filled_pct": 88.79,
+      "unique_count": 5,
+      "samples": [
+        "Mobile",
+        "Mobile",
+        "Mobile",
+        "Mobile",
+        "Mobile"
+      ],
+      "is_numeric": false,
+      "numeric_stats": null,
+      "top_categories": [
+        {
+          "value": "Mobile",
+          "count": 2770,
+          "pct": 80.06
+        },
+        {
+          "value": "FMC",
+          "count": 250,
+          "pct": 7.23
+        },
+        {
+          "value": "Mobile & FMC",
+          "count": 44,
+          "pct": 1.27
+        },
+        {
+          "value": "#N/A",
+          "count": 7,
+          "pct": 0.2
+        },
+        {
+          "value": "FMC & Mobile",
+          "count": 1,
+          "pct": 0.03
+        }
+      ]
+    },
+    "Team QC": {
+      "name": "Team QC",
+      "role": "Quality Control",
+      "description": "Tim Quality Control yang mereview SOP (hasil lookup APPS)",
+      "types_observed": [
+        "str"
+      ],
+      "total_records": 3460,
+      "null_count": 0,
+      "empty_str_count": 174,
+      "missing_count": 174,
+      "missing_pct": 5.03,
+      "filled_count": 3286,
+      "filled_pct": 94.97,
+      "unique_count": 9,
+      "samples": [
+        "A - Dwi",
+        "A - Dwi",
+        "A - Dwi",
+        "A - Dwi",
+        "A - Dwi"
+      ],
+      "is_numeric": false,
+      "numeric_stats": null,
+      "top_categories": [
+        {
+          "value": "C - Jajang",
+          "count": 572,
+          "pct": 16.53
+        },
+        {
+          "value": "D - Jajang",
+          "count": 565,
+          "pct": 16.33
+        },
+        {
+          "value": "BCorp - Apriyanto",
+          "count": 539,
+          "pct": 15.58
+        },
+        {
+          "value": "E - Jajang",
+          "count": 537,
+          "pct": 15.52
+        },
+        {
+          "value": "A - Dwi",
+          "count": 505,
+          "pct": 14.6
+        },
+        {
+          "value": "Tim FMC - Alfian",
+          "count": 296,
+          "pct": 8.55
+        },
+        {
+          "value": "B - Dwi",
+          "count": 259,
+          "pct": 7.49
+        },
+        {
+          "value": "B-Corp Apriyanto",
+          "count": 8,
+          "pct": 0.23
+        },
+        {
+          "value": "#N/A",
+          "count": 5,
+          "pct": 0.14
+        }
+      ]
+    },
+    "SOP Name": {
+      "name": "SOP Name",
+      "role": "Documentation Title",
+      "description": "Judul dokumen SOP terkait",
+      "types_observed": [
+        "str"
+      ],
+      "total_records": 3460,
+      "null_count": 0,
+      "empty_str_count": 577,
+      "missing_count": 577,
+      "missing_pct": 16.68,
+      "filled_count": 2883,
+      "filled_pct": 83.32,
+      "unique_count": 1634,
+      "samples": [
+        "Restart Service AdServer",
+        "Restart Service AdServer",
+        "Restart Service AdServer",
+        "Restart Service AdServer",
+        "Cek Campaign Offdeck AdServer AdServer"
+      ],
+      "is_numeric": false,
+      "numeric_stats": null,
+      "top_categories": [
+        {
+          "value": "Cronjob Housekeeping DOM",
+          "count": 128,
+          "pct": 3.7
+        },
+        {
+          "value": "Housekeeping Outsystem",
+          "count": 110,
+          "pct": 3.18
+        },
+        {
+          "value": "Restart Service SMS Gateway",
+          "count": 85,
+          "pct": 2.46
+        },
+        {
+          "value": "Restart Service v3 C2P",
+          "count": 84,
+          "pct": 2.43
+        },
+        {
+          "value": "Cronjob Auto HK Agnosd",
+          "count": 48,
+          "pct": 1.39
+        },
+        {
+          "value": "Check Status Application - Restart Service Offdeck",
+          "count": 39,
+          "pct": 1.13
+        },
+        {
+          "value": "#N/A",
+          "count": 31,
+          "pct": 0.9
+        },
+        {
+          "value": "Monitoring Dunia Games",
+          "count": 27,
+          "pct": 0.78
+        },
+        {
+          "value": "Housekeeping Auto Office 365 Productivity",
+          "count": 27,
+          "pct": 0.78
+        },
+        {
+          "value": "Monitoring CPU, MEM, SR via Grafana MyTelkomsel",
+          "count": 23,
+          "pct": 0.66
+        }
+      ]
+    },
+    "Status": {
+      "name": "Status",
+      "role": "Operational Status",
+      "description": "Status kesiapan SOP operasional (misal: DONE, Takeout)",
+      "types_observed": [
+        "str"
+      ],
+      "total_records": 3460,
+      "null_count": 0,
+      "empty_str_count": 226,
+      "missing_count": 226,
+      "missing_pct": 6.53,
+      "filled_count": 3234,
+      "filled_pct": 93.47,
+      "unique_count": 6,
+      "samples": [
+        "DONE",
+        "DONE",
+        "DONE",
+        "DONE",
+        "DONE"
+      ],
+      "is_numeric": false,
+      "numeric_stats": null,
+      "top_categories": [
+        {
+          "value": "DONE",
+          "count": 2833,
+          "pct": 81.88
+        },
+        {
+          "value": "Take Out",
+          "count": 332,
+          "pct": 9.6
+        },
+        {
+          "value": "#N/A",
+          "count": 62,
+          "pct": 1.79
+        },
+        {
+          "value": "Takeout",
+          "count": 5,
+          "pct": 0.14
+        },
+        {
+          "value": "Take out",
+          "count": 1,
+          "pct": 0.03
+        },
+        {
+          "value": "take Out",
+          "count": 1,
+          "pct": 0.03
+        }
+      ]
+    },
+    "Status (Old)": {
+      "name": "Status (Old)",
+      "role": "Historical Status",
+      "description": "Status historis sebelum pembaruan evaluasi",
+      "types_observed": [
+        "str"
+      ],
+      "total_records": 3460,
+      "null_count": 0,
+      "empty_str_count": 227,
+      "missing_count": 227,
+      "missing_pct": 6.56,
+      "filled_count": 3233,
+      "filled_pct": 93.44,
+      "unique_count": 6,
+      "samples": [
+        "DONE",
+        "DONE",
+        "DONE",
+        "DONE",
+        "DONE"
+      ],
+      "is_numeric": false,
+      "numeric_stats": null,
+      "top_categories": [
+        {
+          "value": "DONE",
+          "count": 2765,
+          "pct": 79.91
+        },
+        {
+          "value": "Take Out",
+          "count": 392,
+          "pct": 11.33
+        },
+        {
+          "value": "#N/A",
+          "count": 69,
+          "pct": 1.99
+        },
+        {
+          "value": "Takeout",
+          "count": 5,
+          "pct": 0.14
+        },
+        {
+          "value": "Take out",
+          "count": 1,
+          "pct": 0.03
+        },
+        {
+          "value": "take Out",
+          "count": 1,
+          "pct": 0.03
+        }
+      ]
+    },
+    "TYPE ACTIVITY2": {
+      "name": "TYPE ACTIVITY2",
+      "role": "Standardized Category",
+      "description": "Kategori aktivitas terstandarisasi via formula IFS",
+      "types_observed": [
+        "str"
+      ],
+      "total_records": 3460,
+      "null_count": 0,
+      "empty_str_count": 223,
+      "missing_count": 223,
+      "missing_pct": 6.45,
+      "filled_count": 3237,
+      "filled_pct": 93.55,
+      "unique_count": 5,
+      "samples": [
+        "Alert & Incident",
+        "Alert & Incident",
+        "Alert & Incident",
+        "Alert & Incident",
+        "Service Request & Complaint Handling"
+      ],
+      "is_numeric": false,
+      "numeric_stats": null,
+      "top_categories": [
+        {
+          "value": "Alert & Incident",
+          "count": 1732,
+          "pct": 50.06
+        },
+        {
+          "value": "Service Request & Complaint Handling",
+          "count": 1190,
+          "pct": 34.39
+        },
+        {
+          "value": "Daily Activity",
+          "count": 193,
+          "pct": 5.58
+        },
+        {
+          "value": "Audit",
+          "count": 71,
+          "pct": 2.05
+        },
+        {
+          "value": "Change",
+          "count": 51,
+          "pct": 1.47
+        }
+      ]
+    },
+    "Assessment Status": {
+      "name": "Assessment Status",
+      "role": "Governance Status",
+      "description": "Status peninjauan asesmen (Done vs empty)",
+      "types_observed": [
+        "str"
+      ],
+      "total_records": 3460,
+      "null_count": 0,
+      "empty_str_count": 706,
+      "missing_count": 706,
+      "missing_pct": 20.4,
+      "filled_count": 2754,
+      "filled_pct": 79.6,
+      "unique_count": 1,
+      "samples": [
+        "Done",
+        "Done",
+        "Done",
+        "Done",
+        "Done"
+      ],
+      "is_numeric": false,
+      "numeric_stats": null,
+      "top_categories": [
+        {
+          "value": "Done",
+          "count": 2754,
+          "pct": 79.6
+        }
+      ]
+    },
+    "Tools": {
+      "name": "Tools",
+      "role": "Technical Environment",
+      "description": "Klasifikasi alat/lingkungan teknis (OS, DB, Web, dll)",
+      "types_observed": [
+        "str"
+      ],
+      "total_records": 3460,
+      "null_count": 0,
+      "empty_str_count": 2107,
+      "missing_count": 2107,
+      "missing_pct": 60.9,
+      "filled_count": 1353,
+      "filled_pct": 39.1,
+      "unique_count": 99,
+      "samples": [
+        "OS",
+        "OS",
+        "OS",
+        "OS",
+        "GUI - WEB"
+      ],
+      "is_numeric": false,
+      "numeric_stats": null,
+      "top_categories": [
+        {
+          "value": "GUI - Web Dashboard Internal",
+          "count": 244,
+          "pct": 7.05
+        },
+        {
+          "value": "GUI - WEB",
+          "count": 208,
+          "pct": 6.01
+        },
+        {
+          "value": "OS",
+          "count": 202,
+          "pct": 5.84
+        },
+        {
+          "value": "GUI - Desktop",
+          "count": 177,
+          "pct": 5.12
+        },
+        {
+          "value": "AWS",
+          "count": 92,
+          "pct": 2.66
+        },
+        {
+          "value": "GUI - WEB OCP",
+          "count": 84,
+          "pct": 2.43
+        },
+        {
+          "value": "DB",
+          "count": 65,
+          "pct": 1.88
+        },
+        {
+          "value": "GUI - Web CICD",
+          "count": 29,
+          "pct": 0.84
+        },
+        {
+          "value": "GUI - Web Splunk",
+          "count": 23,
+          "pct": 0.66
+        },
+        {
+          "value": "Locked",
+          "count": 18,
+          "pct": 0.52
+        }
+      ]
+    },
+    "Category Action": {
+      "name": "Category Action",
+      "role": "Improvement Action",
+      "description": "Aksi spesifik perbaikan (seluruh baris kosong di JSON sumber)",
+      "types_observed": [
+        "str"
+      ],
+      "total_records": 3460,
+      "null_count": 0,
+      "empty_str_count": 3460,
+      "missing_count": 3460,
+      "missing_pct": 100.0,
+      "filled_count": 0,
+      "filled_pct": 0.0,
+      "unique_count": 0,
+      "samples": [],
+      "is_numeric": false,
+      "numeric_stats": null,
+      "top_categories": []
+    },
+    "Confirmation Tower/L2": {
+      "name": "Confirmation Tower/L2",
+      "role": "Governance Alignment",
+      "description": "Status konfirmasi tim teknis Tower / L2",
+      "types_observed": [
+        "str"
+      ],
+      "total_records": 3460,
+      "null_count": 0,
+      "empty_str_count": 3460,
+      "missing_count": 3460,
+      "missing_pct": 100.0,
+      "filled_count": 0,
+      "filled_pct": 0.0,
+      "unique_count": 0,
+      "samples": [],
+      "is_numeric": false,
+      "numeric_stats": null,
+      "top_categories": []
+    },
+    "Support Needed": {
+      "name": "Support Needed",
+      "role": "Dependency / Enabler",
+      "description": "Dukungan atau dependensi yang dibutuhkan",
+      "types_observed": [
+        "str"
+      ],
+      "total_records": 3460,
+      "null_count": 0,
+      "empty_str_count": 3460,
+      "missing_count": 3460,
+      "missing_pct": 100.0,
+      "filled_count": 0,
+      "filled_pct": 0.0,
+      "unique_count": 0,
+      "samples": [],
+      "is_numeric": false,
+      "numeric_stats": null,
+      "top_categories": []
+    },
+    "Phase": {
+      "name": "Phase",
+      "role": "Implementation Phase",
+      "description": "Fase implementasi automasi (misal: Phase 1, Phase 2)",
+      "types_observed": [
+        "str"
+      ],
+      "total_records": 3460,
+      "null_count": 0,
+      "empty_str_count": 176,
+      "missing_count": 176,
+      "missing_pct": 5.09,
+      "filled_count": 3284,
+      "filled_pct": 94.91,
+      "unique_count": 2,
+      "samples": [
+        "Phase 1",
+        "Phase 1",
+        "Phase 1",
+        "Phase 1",
+        "Phase 1"
+      ],
+      "is_numeric": false,
+      "numeric_stats": null,
+      "top_categories": [
+        {
+          "value": "Phase 1",
+          "count": 2941,
+          "pct": 85.0
+        },
+        {
+          "value": "Phase 2",
+          "count": 343,
+          "pct": 9.91
+        }
+      ]
+    },
+    "Ops Activity": {
+      "name": "Ops Activity",
+      "role": "Operational Tag",
+      "description": "Tag operasional aktivitas",
+      "types_observed": [
+        "str"
+      ],
+      "total_records": 3460,
+      "null_count": 0,
+      "empty_str_count": 223,
+      "missing_count": 223,
+      "missing_pct": 6.45,
+      "filled_count": 3237,
+      "filled_pct": 93.55,
+      "unique_count": 2,
+      "samples": [
+        "Workaround",
+        "Workaround",
+        "Workaround",
+        "Workaround",
+        "Ops Activity"
+      ],
+      "is_numeric": false,
+      "numeric_stats": null,
+      "top_categories": [
+        {
+          "value": "Workaround",
+          "count": 1815,
+          "pct": 52.46
+        },
+        {
+          "value": "Ops Activity",
+          "count": 1422,
+          "pct": 41.1
+        }
+      ]
+    },
+    "Tools Automation": {
+      "name": "Tools Automation",
+      "role": "Automation Tooling",
+      "description": "Alat automasi yang direncanakan / Not Automate",
+      "types_observed": [
+        "str"
+      ],
+      "total_records": 3460,
+      "null_count": 0,
+      "empty_str_count": 223,
+      "missing_count": 223,
+      "missing_pct": 6.45,
+      "filled_count": 3237,
+      "filled_pct": 93.55,
+      "unique_count": 11,
+      "samples": [
+        "Not Automate",
+        "Not Automate",
+        "Not Automate",
+        "Not Automate",
+        "Not Automate"
+      ],
+      "is_numeric": false,
+      "numeric_stats": null,
+      "top_categories": [
+        {
+          "value": "Not Automate",
+          "count": 1869,
+          "pct": 54.02
+        },
+        {
+          "value": "Shell script",
+          "count": 448,
+          "pct": 12.95
+        },
+        {
+          "value": "Shell Script",
+          "count": 320,
+          "pct": 9.25
+        },
+        {
+          "value": "AION",
+          "count": 250,
+          "pct": 7.23
+        },
+        {
+          "value": "Grafana",
+          "count": 249,
+          "pct": 7.2
+        },
+        {
+          "value": "BMC",
+          "count": 56,
+          "pct": 1.62
+        },
+        {
+          "value": "Jenkins",
+          "count": 15,
+          "pct": 0.43
+        },
+        {
+          "value": "CICD",
+          "count": 10,
+          "pct": 0.29
+        },
+        {
+          "value": "Internal Dashboard",
+          "count": 10,
+          "pct": 0.29
+        },
+        {
+          "value": "DSC",
+          "count": 9,
+          "pct": 0.26
+        }
+      ]
+    },
+    "Module AO": {
+      "name": "Module AO",
+      "role": "Module Identifier",
+      "description": "Modul Automation Opportunity terkait",
+      "types_observed": [
+        "str"
+      ],
+      "total_records": 3460,
+      "null_count": 0,
+      "empty_str_count": 3460,
+      "missing_count": 3460,
+      "missing_pct": 100.0,
+      "filled_count": 0,
+      "filled_pct": 0.0,
+      "unique_count": 0,
+      "samples": [],
+      "is_numeric": false,
+      "numeric_stats": null,
+      "top_categories": []
+    }
+  },
+  "data_quality": {
+    "exact_duplicate_records": 0,
+    "activity_id_integrity": {
+      "missing": 0,
+      "unique": 3460,
+      "duplicate_count": 0,
+      "equals_concat_count": 3460,
+      "equals_concat_pct": 100.0
+    },
+    "concat_integrity": {
+      "missing": 0,
+      "unique": 3460,
+      "duplicate_count": 0,
+      "equals_composed_count": 3460,
+      "equals_composed_pct": 100.0
+    },
+    "non_numeric_anomalies": {
+      "Durasi (Menit)": {
+        "120 menit": 1,
+        "N/A": 1,
+        "30 menit": 31,
+        "45 menit": 8,
+        "15 menit": 4,
+        "60 menit": 1,
+        "20 menit": 11,
+        "25 menit": 23
+      },
+      "Event Per Month": {
+        "Quarterly": 1,
+        "N/A": 68,
+        "30/31": 6
+      }
+    },
+    "url_audits": {
+      "link_confluence": {
+        "total_populated": 3192,
+        "valid_http_count": 3185,
+        "valid_http_pct": 92.05,
+        "text_notes_count": 7,
+        "text_notes_samples": [
+          "Manual handling Tim Improvement",
+          "Gabung sama SOP pengecekan dan remove offer",
+          "Menunggu Migrasi QC",
+          "Menunggu Migrasi QC",
+          "Provide by Sigma"
+        ],
+        "domain_breakdown": {
+          "confluence.telkomsel.co.id": 3185
+        }
+      },
+      "link_wiki": {
+        "total_populated": 0,
+        "valid_http_count": 0,
+        "valid_http_pct": 0.0,
+        "text_notes_count": 0,
+        "text_notes_samples": [],
+        "domain_breakdown": {}
+      }
+    }
+  },
+  "formula_verification": {
+    "workload_formula": {
+      "formula": "Workload = Durasi (Menit) * Event Per Month",
+      "valid_operands_count": 3080,
+      "exact_matches_count": 3080,
+      "exact_matches_pct": 100.0,
+      "mismatches_count": 0,
+      "mismatches": []
+    },
+    "workload_after_formula": {
+      "formula": "Workload after = Durasi after * Event Per Month",
+      "valid_operands_count": 3080,
+      "exact_matches_count": 3080,
+      "exact_matches_pct": 100.0,
+      "mismatches_count": 0,
+      "mismatches": []
+    },
+    "ten_percent_duration_rule": {
+      "rule": "Durasi after = Durasi (Menit) * 0.1",
+      "exact_10_percent_count": 3028,
+      "exact_10_percent_pct": 87.51,
+      "zero_duration_after_count": 33,
+      "other_ratio_count": 19,
+      "missing_count": 380
+    },
+    "operand_combinations": {
+      "(True, True, True)": 3080,
+      "(True, True, False)": 85,
+      "(False, False, False)": 293,
+      "(False, True, False)": 2
+    }
+  },
+  "statistical_profiling": {
+    "workload_bins": {
+      "Zero (0)": 1605,
+      "Micro (1 - 60 min/mo)": 1049,
+      "Low (61 - 300 min/mo)": 264,
+      "Medium (301 - 1,200 min/mo)": 152,
+      "High (1,201 - 6,000 min/mo)": 9,
+      "Critical / Outlier (> 6,000 min/mo)": 1
+    },
+    "duration_bins": {
+      "Micro (<= 5 min)": 509,
+      "Standard (6 - 30 min)": 2476,
+      "Extended (31 - 60 min)": 124,
+      "Long (61 - 240 min)": 51,
+      "Extreme (> 240 min / 4 hrs)": 5
+    },
+    "event_frequency_bins": {
+      "Sub-monthly (< 1 event/mo)": 40,
+      "Monthly (1 event/mo)": 942,
+      "Low (2 - 10 events/mo)": 190,
+      "Daily Routine (11 - 31 events/mo)": 318,
+      "High Frequency (32 - 100 events/mo)": 45,
+      "Intensive (> 100 events/mo)": 2
+    },
+    "correlations": {
+      "pearson": {
+        "num_dur": {
+          "num_dur": 1.0,
+          "num_ev": -0.0343,
+          "num_wl": 0.7065,
+          "num_dur_after": 0.9798,
+          "num_wl_after": 0.6416,
+          "num_wl_saved": 0.7078
+        },
+        "num_ev": {
+          "num_dur": -0.0343,
+          "num_ev": 1.0,
+          "num_wl": 0.3152,
+          "num_dur_after": -0.009,
+          "num_wl_after": 0.3346,
+          "num_wl_saved": 0.3099
+        },
+        "num_wl": {
+          "num_dur": 0.7065,
+          "num_ev": 0.3152,
+          "num_wl": 1.0,
+          "num_dur_after": 0.702,
+          "num_wl_after": 0.9315,
+          "num_wl_saved": 0.999
+        },
+        "num_dur_after": {
+          "num_dur": 0.9798,
+          "num_ev": -0.009,
+          "num_wl": 0.702,
+          "num_dur_after": 1.0,
+          "num_wl_after": 0.7104,
+          "num_wl_saved": 0.6945
+        },
+        "num_wl_after": {
+          "num_dur": 0.6416,
+          "num_ev": 0.3346,
+          "num_wl": 0.9315,
+          "num_dur_after": 0.7104,
+          "num_wl_after": 1.0,
+          "num_wl_saved": 0.9145
+        },
+        "num_wl_saved": {
+          "num_dur": 0.7078,
+          "num_ev": 0.3099,
+          "num_wl": 0.999,
+          "num_dur_after": 0.6945,
+          "num_wl_after": 0.9145,
+          "num_wl_saved": 1.0
+        }
+      },
+      "spearman": {
+        "num_dur": {
+          "num_dur": 1.0,
+          "num_ev": -0.2103,
+          "num_wl": -0.0606,
+          "num_dur_after": 0.9811,
+          "num_wl_after": -0.062,
+          "num_wl_saved": -0.0501
+        },
+        "num_ev": {
+          "num_dur": -0.2103,
+          "num_ev": 1.0,
+          "num_wl": 0.969,
+          "num_dur_after": -0.1831,
+          "num_wl_after": 0.969,
+          "num_wl_saved": 0.9486
+        },
+        "num_wl": {
+          "num_dur": -0.0606,
+          "num_ev": 0.969,
+          "num_wl": 1.0,
+          "num_dur_after": -0.0354,
+          "num_wl_after": 0.9998,
+          "num_wl_saved": 0.9807
+        },
+        "num_dur_after": {
+          "num_dur": 0.9811,
+          "num_ev": -0.1831,
+          "num_wl": -0.0354,
+          "num_dur_after": 1.0,
+          "num_wl_after": -0.0329,
+          "num_wl_saved": -0.0629
+        },
+        "num_wl_after": {
+          "num_dur": -0.062,
+          "num_ev": 0.969,
+          "num_wl": 0.9998,
+          "num_dur_after": -0.0329,
+          "num_wl_after": 1.0,
+          "num_wl_saved": 0.9766
+        },
+        "num_wl_saved": {
+          "num_dur": -0.0501,
+          "num_ev": 0.9486,
+          "num_wl": 0.9807,
+          "num_dur_after": -0.0629,
+          "num_wl_after": 0.9766,
+          "num_wl_saved": 1.0
+        }
+      }
+    }
+  },
+  "cross_column": {
+    "top_apps": [
+      "Sienna",
+      "DOM",
+      "Outsystem",
+      "MSight Dashboard",
+      "SMS Gateway",
+      "C2P",
+      "Elisa",
+      "MBP",
+      "IPTV Platform",
+      "Telkomsel Portal"
+    ],
+    "status_by_app": {
+      "DONE": {
+        "Sienna": 172,
+        "DOM": 152,
+        "Outsystem": 112,
+        "MSight Dashboard": 108,
+        "SMS Gateway": 104,
+        "C2P": 92,
+        "Elisa": 80,
+        "MBP": 0,
+        "IPTV Platform": 89,
+        "Telkomsel Portal": 73
+      },
+      "Take Out": {
+        "Sienna": 0,
+        "DOM": 1,
+        "Outsystem": 2,
+        "MSight Dashboard": 0,
+        "SMS Gateway": 0,
+        "C2P": 7,
+        "Elisa": 12,
+        "MBP": 49,
+        "IPTV Platform": 0,
+        "Telkomsel Portal": 4
+      },
+      "#N/A": {
+        "Sienna": 1,
+        "DOM": 0,
+        "Outsystem": 0,
+        "MSight Dashboard": 0,
+        "SMS Gateway": 0,
+        "C2P": 0,
+        "Elisa": 0,
+        "MBP": 0,
+        "IPTV Platform": 0,
+        "Telkomsel Portal": 1
+      },
+      "Takeout": {
+        "Sienna": 0,
+        "DOM": 0,
+        "Outsystem": 0,
+        "MSight Dashboard": 0,
+        "SMS Gateway": 0,
+        "C2P": 0,
+        "Elisa": 0,
+        "MBP": 0,
+        "IPTV Platform": 0,
+        "Telkomsel Portal": 0
+      }
+    },
+    "tools_by_app": {
+      "GUI - Web Dashboard Internal": {
+        "Sienna": 1,
+        "DOM": 0,
+        "Outsystem": 0,
+        "MSight Dashboard": 2,
+        "SMS Gateway": 0,
+        "C2P": 0,
+        "Elisa": 1,
+        "MBP": 0,
+        "IPTV Platform": 0,
+        "Telkomsel Portal": 0
+      },
+      "GUI - WEB": {
+        "Sienna": 1,
+        "DOM": 0,
+        "Outsystem": 1,
+        "MSight Dashboard": 0,
+        "SMS Gateway": 0,
+        "C2P": 1,
+        "Elisa": 4,
+        "MBP": 0,
+        "IPTV Platform": 20,
+        "Telkomsel Portal": 1
+      },
+      "OS": {
+        "Sienna": 0,
+        "DOM": 1,
+        "Outsystem": 10,
+        "MSight Dashboard": 0,
+        "SMS Gateway": 5,
+        "C2P": 0,
+        "Elisa": 18,
+        "MBP": 0,
+        "IPTV Platform": 30,
+        "Telkomsel Portal": 12
+      },
+      "GUI - Desktop": {
+        "Sienna": 164,
+        "DOM": 0,
+        "Outsystem": 0,
+        "MSight Dashboard": 0,
+        "SMS Gateway": 0,
+        "C2P": 0,
+        "Elisa": 0,
+        "MBP": 0,
+        "IPTV Platform": 0,
+        "Telkomsel Portal": 0
+      }
+    },
+    "div_distribution": [
+      {
+        "div": "IT CFB",
+        "count": 1847,
+        "pct": 53.38
+      },
+      {
+        "div": "IT BDC",
+        "count": 1604,
+        "pct": 46.36
+      },
+      {
+        "div": "#N/A",
+        "count": 5,
+        "pct": 0.14
+      },
+      {
+        "div": "IT BITE",
+        "count": 4,
+        "pct": 0.12
+      }
+    ],
+    "dept_distribution": [
+      {
+        "dept": "PFIP",
+        "count": 996,
+        "pct": 28.79
+      },
+      {
+        "dept": "ENDIGI",
+        "count": 769,
+        "pct": 22.23
+      },
+      {
+        "dept": "CSOM",
+        "count": 658,
+        "pct": 19.02
+      },
+      {
+        "dept": "CTEOPM",
+        "count": 568,
+        "pct": 16.42
+      },
+      {
+        "dept": "ByU & IoT",
+        "count": 271,
+        "pct": 7.83
+      },
+      {
+        "dept": "IPOM",
+        "count": 193,
+        "pct": 5.58
+      },
+      {
+        "dept": "#N/A",
+        "count": 5,
+        "pct": 0.14
+      }
+    ],
+    "status_cross_assessment": {
+      "": {
+        "": 223,
+        "#N/A": 3,
+        "DONE": 152,
+        "Take Out": 326,
+        "Take out": 1,
+        "Takeout": 0,
+        "take Out": 1
+      },
+      "Done": {
+        "": 3,
+        "#N/A": 59,
+        "DONE": 2681,
+        "Take Out": 6,
+        "Take out": 0,
+        "Takeout": 5,
+        "take Out": 0
+      }
+    }
+  },
+  "activity_characteristics": {
+    "top_workload": [
+      {
+        "activity_id": "Office 365 Productivity - Backup OneDrive files & Solving if Mailbox or OneDrive Storage Full and Handle Users Can’t Import PST (License F3 Only)",
+        "APPS": "Office 365 Productivity",
+        "ACTIVITY NAME": "Backup OneDrive files & Solving if Mailbox or OneDrive Storage Full and Handle Users Can’t Import PST (License F3 Only)",
+        "Durasi (Menit)": "1440",
+        "Event Per Month": "19",
+        "Workload": "27360",
+        "Durasi after": "144",
+        "Workload after": "2736",
+        "Status": "DONE",
+        "Tools": "GUI - Web Dashboard Internal",
+        "parsed_num_wl": 27360.0
+      },
+      {
+        "activity_id": "NBP Lite - MO Retry",
+        "APPS": "NBP Lite",
+        "ACTIVITY NAME": "MO Retry",
+        "Durasi (Menit)": "10",
+        "Event Per Month": "495",
+        "Workload": "4950",
+        "Durasi after": "1",
+        "Workload after": "495",
+        "Status": "DONE",
+        "Tools": "",
+        "parsed_num_wl": 4950.0
+      },
+      {
+        "activity_id": "Loena - Pegasus Project - Daily Report Loena Performance",
+        "APPS": "Loena",
+        "ACTIVITY NAME": "Pegasus Project - Daily Report Loena Performance",
+        "Durasi (Menit)": "120",
+        "Event Per Month": "30",
+        "Workload": "3600",
+        "Durasi after": "12",
+        "Workload after": "360",
+        "Status": "DONE",
+        "Tools": "",
+        "parsed_num_wl": 3600.0
+      },
+      {
+        "activity_id": "SAM - Snow Data Update Job",
+        "APPS": "SAM",
+        "ACTIVITY NAME": "Snow Data Update Job",
+        "Durasi (Menit)": "120",
+        "Event Per Month": "30",
+        "Workload": "3600",
+        "Durasi after": "12",
+        "Workload after": "360",
+        "Status": "DONE",
+        "Tools": "",
+        "parsed_num_wl": 3600.0
+      },
+      {
+        "activity_id": "UFO - Checking Order",
+        "APPS": "UFO",
+        "ACTIVITY NAME": "Checking Order",
+        "Durasi (Menit)": "5",
+        "Event Per Month": "455",
+        "Workload": "2275",
+        "Durasi after": "0,5",
+        "Workload after": "227,5",
+        "Status": "DONE",
+        "Tools": "DB",
+        "parsed_num_wl": 2275.0
+      },
+      {
+        "activity_id": "C2P - C2P MASSTOOL RECORD NOT FOUND",
+        "APPS": "C2P",
+        "ACTIVITY NAME": "C2P MASSTOOL RECORD NOT FOUND",
+        "Durasi (Menit)": "20",
+        "Event Per Month": "93",
+        "Workload": "1860",
+        "Durasi after": "2",
+        "Workload after": "186",
+        "Status": "DONE",
+        "Tools": "",
+        "parsed_num_wl": 1860.0
+      },
+      {
+        "activity_id": "Telkomsel Portal - Generate Payment report Daily (FMC)",
+        "APPS": "Telkomsel Portal",
+        "ACTIVITY NAME": "Generate Payment report Daily (FMC)",
+        "Durasi (Menit)": "60",
+        "Event Per Month": "30",
+        "Workload": "1800",
+        "Durasi after": "6",
+        "Workload after": "180",
+        "Status": "DONE",
+        "Tools": "OS & DB",
+        "parsed_num_wl": 1800.0
+      },
+      {
+        "activity_id": "Telkomsel Portal - Tselid Clicker Report",
+        "APPS": "Telkomsel Portal",
+        "ACTIVITY NAME": "Tselid Clicker Report",
+        "Durasi (Menit)": "60",
+        "Event Per Month": "30",
+        "Workload": "1800",
+        "Durasi after": "6",
+        "Workload after": "180",
+        "Status": "DONE",
+        "Tools": "",
+        "parsed_num_wl": 1800.0
+      },
+      {
+        "activity_id": "DOM - Restart spica",
+        "APPS": "DOM",
+        "ACTIVITY NAME": "Restart spica",
+        "Durasi (Menit)": "60",
+        "Event Per Month": "30",
+        "Workload": "1800",
+        "Durasi after": "6",
+        "Workload after": "180",
+        "Status": "Take Out",
+        "Tools": "",
+        "parsed_num_wl": 1800.0
+      },
+      {
+        "activity_id": "iKnow - Report Penarikan Data Content Publish dan update KMS",
+        "APPS": "iKnow",
+        "ACTIVITY NAME": "Report Penarikan Data Content Publish dan update KMS",
+        "Durasi (Menit)": "45",
+        "Event Per Month": "30",
+        "Workload": "1350",
+        "Durasi after": "4,5",
+        "Workload after": "135",
+        "Status": "DONE",
+        "Tools": "",
+        "parsed_num_wl": 1350.0
+      }
+    ],
+    "top_duration": [
+      {
+        "activity_id": "Office 365 Productivity - Backup OneDrive files & Solving if Mailbox or OneDrive Storage Full and Handle Users Can’t Import PST (License F3 Only)",
+        "APPS": "Office 365 Productivity",
+        "ACTIVITY NAME": "Backup OneDrive files & Solving if Mailbox or OneDrive Storage Full and Handle Users Can’t Import PST (License F3 Only)",
+        "Durasi (Menit)": "1440",
+        "Event Per Month": "19",
+        "Workload": "27360",
+        "Durasi after": "144",
+        "Workload after": "2736",
+        "Status": "DONE",
+        "Tools": "GUI - Web Dashboard Internal",
+        "parsed_num_dur": 1440.0
+      },
+      {
+        "activity_id": "Sienna - Parameter Setting ITC-03-G-02",
+        "APPS": "Sienna",
+        "ACTIVITY NAME": "Parameter Setting ITC-03-G-02",
+        "Durasi (Menit)": "600",
+        "Event Per Month": "0,333333333",
+        "Workload": "200",
+        "Durasi after": "60",
+        "Workload after": "20",
+        "Status": "DONE",
+        "Tools": "GUI - Desktop",
+        "parsed_num_dur": 600.0
+      },
+      {
+        "activity_id": "Digital Core PC - Parameter Setting ITC-03-G-02",
+        "APPS": "Digital Core PC",
+        "ACTIVITY NAME": "Parameter Setting ITC-03-G-02",
+        "Durasi (Menit)": "360",
+        "Event Per Month": "0,333333333",
+        "Workload": "120",
+        "Durasi after": "36",
+        "Workload after": "12",
+        "Status": "DONE",
+        "Tools": "Web Dashboard Sigma, POV ESB, SPLINK,  C2C",
+        "parsed_num_dur": 360.0
+      },
+      {
+        "activity_id": "Sienna - Get User List Sienna",
+        "APPS": "Sienna",
+        "ACTIVITY NAME": "Get User List Sienna",
+        "Durasi (Menit)": "300",
+        "Event Per Month": "1",
+        "Workload": "300",
+        "Durasi after": "30",
+        "Workload after": "30",
+        "Status": "DONE",
+        "Tools": "GUI - Desktop",
+        "parsed_num_dur": 300.0
+      },
+      {
+        "activity_id": "MDM Sharepoint - IPE - Dump Data List User & Roles MDM Sharepoint",
+        "APPS": "MDM Sharepoint",
+        "ACTIVITY NAME": "IPE - Dump Data List User & Roles MDM Sharepoint",
+        "Durasi (Menit)": "300",
+        "Event Per Month": "0,333333333",
+        "Workload": "100",
+        "Durasi after": "30",
+        "Workload after": "10",
+        "Status": "DONE",
+        "Tools": "",
+        "parsed_num_dur": 300.0
+      },
+      {
+        "activity_id": "Loena - Maintenance - Rebuild Index",
+        "APPS": "Loena",
+        "ACTIVITY NAME": "Maintenance - Rebuild Index",
+        "Durasi (Menit)": "240",
+        "Event Per Month": "2",
+        "Workload": "480",
+        "Durasi after": "24",
+        "Workload after": "48",
+        "Status": "DONE",
+        "Tools": "DB",
+        "parsed_num_dur": 240.0
+      },
+      {
+        "activity_id": "Digital Core PC - Dump Taxonomy Production PC",
+        "APPS": "Digital Core PC",
+        "ACTIVITY NAME": "Dump Taxonomy Production PC",
+        "Durasi (Menit)": "240",
+        "Event Per Month": "0",
+        "Workload": "0",
+        "Durasi after": "24",
+        "Workload after": "0",
+        "Status": "DONE",
+        "Tools": "GUI - WEB",
+        "parsed_num_dur": 240.0
+      },
+      {
+        "activity_id": "Unified Provisioning - Berita Acara Data Loading Paradise - Unified Provisioning (LAR) INV-06-D-01",
+        "APPS": "Unified Provisioning",
+        "ACTIVITY NAME": "Berita Acara Data Loading Paradise - Unified Provisioning (LAR) INV-06-D-01",
+        "Durasi (Menit)": "240",
+        "Event Per Month": "1",
+        "Workload": "240",
+        "Durasi after": "24",
+        "Workload after": "24",
+        "Status": "DONE",
+        "Tools": "",
+        "parsed_num_dur": 240.0
+      },
+      {
+        "activity_id": "SA PCC - Daily Activity Checklist Byu PRE-06-E-06",
+        "APPS": "SA PCC",
+        "ACTIVITY NAME": "Daily Activity Checklist Byu PRE-06-E-06",
+        "Durasi (Menit)": "180",
+        "Event Per Month": "1",
+        "Workload": "180",
+        "Durasi after": "18",
+        "Workload after": "18",
+        "Status": "Take Out",
+        "Tools": "",
+        "parsed_num_dur": 180.0
+      },
+      {
+        "activity_id": "Bulk Premium - Parameter Setting ITC-03-G-02",
+        "APPS": "Bulk Premium",
+        "ACTIVITY NAME": "Parameter Setting ITC-03-G-02",
+        "Durasi (Menit)": "180",
+        "Event Per Month": "0,333333333",
+        "Workload": "60",
+        "Durasi after": "18",
+        "Workload after": "6",
+        "Status": "DONE",
+        "Tools": "",
+        "parsed_num_dur": 180.0
+      }
+    ],
+    "top_events": [
+      {
+        "activity_id": "NBP Lite - MO Retry",
+        "APPS": "NBP Lite",
+        "ACTIVITY NAME": "MO Retry",
+        "Durasi (Menit)": "10",
+        "Event Per Month": "495",
+        "Workload": "4950",
+        "Durasi after": "1",
+        "Workload after": "495",
+        "Status": "DONE",
+        "Tools": "",
+        "parsed_num_ev": 495.0
+      },
+      {
+        "activity_id": "UFO - Checking Order",
+        "APPS": "UFO",
+        "ACTIVITY NAME": "Checking Order",
+        "Durasi (Menit)": "5",
+        "Event Per Month": "455",
+        "Workload": "2275",
+        "Durasi after": "0,5",
+        "Workload after": "227,5",
+        "Status": "DONE",
+        "Tools": "DB",
+        "parsed_num_ev": 455.0
+      },
+      {
+        "activity_id": "C2P - C2P MASSTOOL RECORD NOT FOUND",
+        "APPS": "C2P",
+        "ACTIVITY NAME": "C2P MASSTOOL RECORD NOT FOUND",
+        "Durasi (Menit)": "20",
+        "Event Per Month": "93",
+        "Workload": "1860",
+        "Durasi after": "2",
+        "Workload after": "186",
+        "Status": "DONE",
+        "Tools": "",
+        "parsed_num_ev": 93.0
+      },
+      {
+        "activity_id": "IndihomeTV OTT - Video Processing",
+        "APPS": "IndihomeTV OTT",
+        "ACTIVITY NAME": "Video Processing",
+        "Durasi (Menit)": "10",
+        "Event Per Month": "90",
+        "Workload": "900",
+        "Durasi after": "1",
+        "Workload after": "90",
+        "Status": "DONE",
+        "Tools": "",
+        "parsed_num_ev": 90.0
+      },
+      {
+        "activity_id": "IndihomeTV OTT - Monitoring service",
+        "APPS": "IndihomeTV OTT",
+        "ACTIVITY NAME": "Monitoring service",
+        "Durasi (Menit)": "10",
+        "Event Per Month": "90",
+        "Workload": "900",
+        "Durasi after": "1",
+        "Workload after": "90",
+        "Status": "DONE",
+        "Tools": "",
+        "parsed_num_ev": 90.0
+      },
+      {
+        "activity_id": "IndihomeTV OTT - Monitoring service server",
+        "APPS": "IndihomeTV OTT",
+        "ACTIVITY NAME": "Monitoring service server",
+        "Durasi (Menit)": "10",
+        "Event Per Month": "90",
+        "Workload": "900",
+        "Durasi after": "1",
+        "Workload after": "90",
+        "Status": "DONE",
+        "Tools": "",
+        "parsed_num_ev": 90.0
+      },
+      {
+        "activity_id": "SA BSS - Reg/Re-reg Customer Data",
+        "APPS": "SA BSS",
+        "ACTIVITY NAME": "Reg/Re-reg Customer Data",
+        "Durasi (Menit)": "10",
+        "Event Per Month": "63",
+        "Workload": "630",
+        "Durasi after": "1",
+        "Workload after": "63",
+        "Status": "Take Out",
+        "Tools": "",
+        "parsed_num_ev": 63.0
+      },
+      {
+        "activity_id": "SA PCC - CHECK SUBSCRIBER HISTORICAL USAGE",
+        "APPS": "SA PCC",
+        "ACTIVITY NAME": "CHECK SUBSCRIBER HISTORICAL USAGE",
+        "Durasi (Menit)": "5",
+        "Event Per Month": "61",
+        "Workload": "305",
+        "Durasi after": "0,5",
+        "Workload after": "30,5",
+        "Status": "Take Out",
+        "Tools": "",
+        "parsed_num_ev": 61.0
+      },
+      {
+        "activity_id": "MyTelkomsel - Monitoring SR via Grafana (MyTsel WebUI)",
+        "APPS": "MyTelkomsel",
+        "ACTIVITY NAME": "Monitoring SR via Grafana (MyTsel WebUI)",
+        "Durasi (Menit)": "10",
+        "Event Per Month": "60",
+        "Workload": "600",
+        "Durasi after": "1",
+        "Workload after": "60",
+        "Status": "DONE",
+        "Tools": "",
+        "parsed_num_ev": 60.0
+      },
+      {
+        "activity_id": "MyTelkomsel - Monitoring Transaction on Host via Grafana (MyTsel WebUI)",
+        "APPS": "MyTelkomsel",
+        "ACTIVITY NAME": "Monitoring Transaction on Host via Grafana (MyTsel WebUI)",
+        "Durasi (Menit)": "10",
+        "Event Per Month": "60",
+        "Workload": "600",
+        "Durasi after": "1",
+        "Workload after": "60",
+        "Status": "DONE",
+        "Tools": "",
+        "parsed_num_ev": 60.0
+      }
+    ],
+    "top_saved": [
+      {
+        "activity_id": "Office 365 Productivity - Backup OneDrive files & Solving if Mailbox or OneDrive Storage Full and Handle Users Can’t Import PST (License F3 Only)",
+        "APPS": "Office 365 Productivity",
+        "ACTIVITY NAME": "Backup OneDrive files & Solving if Mailbox or OneDrive Storage Full and Handle Users Can’t Import PST (License F3 Only)",
+        "Durasi (Menit)": "1440",
+        "Event Per Month": "19",
+        "Workload": "27360",
+        "Durasi after": "144",
+        "Workload after": "2736",
+        "Status": "DONE",
+        "Tools": "GUI - Web Dashboard Internal",
+        "parsed_num_wl_saved": 24624.0
+      },
+      {
+        "activity_id": "NBP Lite - MO Retry",
+        "APPS": "NBP Lite",
+        "ACTIVITY NAME": "MO Retry",
+        "Durasi (Menit)": "10",
+        "Event Per Month": "495",
+        "Workload": "4950",
+        "Durasi after": "1",
+        "Workload after": "495",
+        "Status": "DONE",
+        "Tools": "",
+        "parsed_num_wl_saved": 4455.0
+      },
+      {
+        "activity_id": "SAM - Snow Data Update Job",
+        "APPS": "SAM",
+        "ACTIVITY NAME": "Snow Data Update Job",
+        "Durasi (Menit)": "120",
+        "Event Per Month": "30",
+        "Workload": "3600",
+        "Durasi after": "12",
+        "Workload after": "360",
+        "Status": "DONE",
+        "Tools": "",
+        "parsed_num_wl_saved": 3240.0
+      },
+      {
+        "activity_id": "Loena - Pegasus Project - Daily Report Loena Performance",
+        "APPS": "Loena",
+        "ACTIVITY NAME": "Pegasus Project - Daily Report Loena Performance",
+        "Durasi (Menit)": "120",
+        "Event Per Month": "30",
+        "Workload": "3600",
+        "Durasi after": "12",
+        "Workload after": "360",
+        "Status": "DONE",
+        "Tools": "",
+        "parsed_num_wl_saved": 3240.0
+      },
+      {
+        "activity_id": "UFO - Checking Order",
+        "APPS": "UFO",
+        "ACTIVITY NAME": "Checking Order",
+        "Durasi (Menit)": "5",
+        "Event Per Month": "455",
+        "Workload": "2275",
+        "Durasi after": "0,5",
+        "Workload after": "227,5",
+        "Status": "DONE",
+        "Tools": "DB",
+        "parsed_num_wl_saved": 2047.5
+      },
+      {
+        "activity_id": "C2P - C2P MASSTOOL RECORD NOT FOUND",
+        "APPS": "C2P",
+        "ACTIVITY NAME": "C2P MASSTOOL RECORD NOT FOUND",
+        "Durasi (Menit)": "20",
+        "Event Per Month": "93",
+        "Workload": "1860",
+        "Durasi after": "2",
+        "Workload after": "186",
+        "Status": "DONE",
+        "Tools": "",
+        "parsed_num_wl_saved": 1674.0
+      },
+      {
+        "activity_id": "Telkomsel Portal - Generate Payment report Daily (FMC)",
+        "APPS": "Telkomsel Portal",
+        "ACTIVITY NAME": "Generate Payment report Daily (FMC)",
+        "Durasi (Menit)": "60",
+        "Event Per Month": "30",
+        "Workload": "1800",
+        "Durasi after": "6",
+        "Workload after": "180",
+        "Status": "DONE",
+        "Tools": "OS & DB",
+        "parsed_num_wl_saved": 1620.0
+      },
+      {
+        "activity_id": "Telkomsel Portal - Tselid Clicker Report",
+        "APPS": "Telkomsel Portal",
+        "ACTIVITY NAME": "Tselid Clicker Report",
+        "Durasi (Menit)": "60",
+        "Event Per Month": "30",
+        "Workload": "1800",
+        "Durasi after": "6",
+        "Workload after": "180",
+        "Status": "DONE",
+        "Tools": "",
+        "parsed_num_wl_saved": 1620.0
+      },
+      {
+        "activity_id": "DOM - Restart spica",
+        "APPS": "DOM",
+        "ACTIVITY NAME": "Restart spica",
+        "Durasi (Menit)": "60",
+        "Event Per Month": "30",
+        "Workload": "1800",
+        "Durasi after": "6",
+        "Workload after": "180",
+        "Status": "Take Out",
+        "Tools": "",
+        "parsed_num_wl_saved": 1620.0
+      },
+      {
+        "activity_id": "iKnow - Report Penarikan Data Content Publish dan update KMS",
+        "APPS": "iKnow",
+        "ACTIVITY NAME": "Report Penarikan Data Content Publish dan update KMS",
+        "Durasi (Menit)": "45",
+        "Event Per Month": "30",
+        "Workload": "1350",
+        "Durasi after": "4,5",
+        "Workload after": "135",
+        "Status": "DONE",
+        "Tools": "",
+        "parsed_num_wl_saved": 1215.0
+      }
+    ]
+  }
+}

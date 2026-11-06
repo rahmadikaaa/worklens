@@ -22,8 +22,10 @@ class Settings(BaseSettings):
     ai_model: str = "gemini-1.5-flash"
     gemini_api_key: Optional[str] = None
 
-    # Storage & Runs
+    # Storage & Uploads
     storage_dir: Path = Path("runs")
+    upload_dir: Path = Path("uploads")
+    max_upload_size_bytes: int = 10 * 1024 * 1024  # 10 MB default (configurable via WORKLENS_MAX_UPLOAD_SIZE_BYTES)
 
     # MCP Integration
     mcp_server_name: str = "worklens-enrichment"
@@ -40,3 +42,4 @@ class Settings(BaseSettings):
 def get_settings() -> Settings:
     """Return cached settings instance."""
     return Settings()
+

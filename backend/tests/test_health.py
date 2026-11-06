@@ -46,3 +46,4 @@ def test_custom_settings_override():
         assert data["mock_mode"] is False
     finally:
         app.dependency_overrides.clear()
+

@@ -105,3 +105,4 @@ The frontend dashboard will be available at: `http://localhost:5173`.
 ## License
 
 Proprietary — Internal Enterprise Automation Platform.
+
