@@ -2,9 +2,52 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --bg: #f5f7f8;
+  --surface: #ffffff;
+  --surface2: #f8fafb;
+  --ink: #172321;
+  --muted: #73817e;
+  --line: #e6ecea;
+  --green: #087f70;
+  --green2: #e3f4ef;
+  --blue: #426b91;
+  --amber: #b98227;
+  --red: #bd6558;
+  --brand: #103f38;
+  --shadow: 0 8px 28px rgba(22, 42, 37, 0.055);
+  --radius: 16px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background-color: var(--bg);
+  color: var(--ink);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
+.font-tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Custom scrollbars for data tables and panels */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}

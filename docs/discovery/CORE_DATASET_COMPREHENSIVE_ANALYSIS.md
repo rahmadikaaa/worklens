@@ -471,7 +471,7 @@ Sesuai panduan arsitektur domain, fakta, interpretasi, dan hipotesis dipisahkan 
 - **HIPOTESIS:** Asumsi yang memerlukan konfirmasi pemilik proses (contoh: nilai `'0'` pada kategori berasal dari formula Excel yang mengevaluasi branch false).
 - Kolom dengan definisi bisnis yang belum tervalidasi diberi status `NEEDS CLARIFICATION` (misal: `Module AO` dan `Category Action`).
 
----
+---2
 
 ## 10. Limitations and Unresolved Questions
 

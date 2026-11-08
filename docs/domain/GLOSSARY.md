@@ -22,7 +22,23 @@ _Avoid_: Category, job type
 
 **Improvement Category**:
 The directional improvement decision established by L1 for an activity, taking values `Automation`, `As Is`, or `Dismantled`.
-_Avoid_: Action category, future state
+_Avoid_: Action category (distinct concept), future state
+
+**Category Action**:
+The six-class operational action taxonomy (`Smart Healing`, `Auto Monitoring`, `Self Service Request`, `Auto Housekeeping`, `Health Check`, `Auto Restart`) classifying the technical nature of an operational activity.
+_Avoid_: Action category, improvement category, activity type
+
+**Status Triggered**:
+The operational automation readiness classification indicating whether an automated activity runs autonomously in production (`Fully Automated`), awaits reactive event triggers (`Not Yet Triggered Automated`), or requires human-operator initiation (`Partial Automated`).
+_Avoid_: Execution status, trigger status, run state
+
+**Benefit Statement**:
+The deterministic executive impact narrative summarizing monthly operational workload eliminated, duration saved per event, tooling, and operational action mechanism.
+_Avoid_: Benefit narrative, impact description, AI summary
+
+**REA (Rapid Evaluation Assessment)**:
+The curated 667-activity subset of Phase 1 operational SOPs evaluated for direct automation benefit realization and benchmarking against the master 3,460 core dataset.
+_Avoid_: REA benchmark, sample dataset, sub-dataset
 
 **Category Notes**:
 The state descriptor detailing the operational stage of an activity under its designated Improvement Category.
